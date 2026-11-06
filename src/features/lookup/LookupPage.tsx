@@ -69,7 +69,7 @@ export function LookupPage() {
                   </Link>
                 </Button>
               </div>
-              <CardContent className="grid gap-4 pt-5 sm:grid-cols-2">
+              <CardContent className="grid grid-cols-1 gap-4 pt-5 sm:grid-cols-2">
                 <Info icon={GraduationCap} label="Course" value={`${r.courseName ?? '—'}${r.yearOfStudy ? ` · Year ${r.yearOfStudy}` : ''}`} />
                 <Info icon={Library} label="Faculty / Department" value={r.facultyName ?? '—'} />
                 <Info icon={Building2} label="School" value={r.schoolName ?? '—'} />

@@ -275,6 +275,8 @@ export interface Delivery {
   notificationId: string
   userId: string
   recipientName: string
+  /** Denormalised so security rules can let the sender read their timeline without a get(). */
+  senderId: string
   status: DeliveryStatus
   // Denormalised so the inbox is a single query on `deliveries`
   title: string

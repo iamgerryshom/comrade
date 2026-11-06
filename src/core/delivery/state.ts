@@ -15,7 +15,7 @@ export const SMS_PATH: DeliveryStatus[] = ['SMS_QUEUED', 'SMS_SENT', 'SMS_DELIVE
 
 export function newDelivery(
   id: string,
-  n: Pick<Notification, 'id' | 'title' | 'category' | 'priority' | 'senderName' | 'audience'>,
+  n: Pick<Notification, 'id' | 'title' | 'category' | 'priority' | 'senderName' | 'senderId' | 'audience'>,
   recipient: { uid: string; name: string },
   now: Date,
   ackTimeoutSeconds: number,
@@ -25,6 +25,7 @@ export function newDelivery(
     notificationId: n.id,
     userId: recipient.uid,
     recipientName: recipient.name,
+    senderId: n.senderId,
     status: 'PENDING',
     title: n.title,
     category: n.category,

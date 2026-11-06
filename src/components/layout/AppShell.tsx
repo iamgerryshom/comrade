@@ -242,7 +242,7 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
               <p className="truncate font-semibold">{profile.name}</p>
               <p className="truncate text-xs font-normal text-muted-foreground">{profile.email}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                <UserTypeBadge userType={profile.userType} />
+                {(profile.userType === 'STAFF' || claims.positions.length > 0) && <UserTypeBadge userType={profile.userType} />}
                 <RoleBadge role={profile.role} userType={profile.userType} positions={claims.positions} />
               </div>
             </DropdownMenuLabel>

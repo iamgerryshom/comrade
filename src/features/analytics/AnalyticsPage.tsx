@@ -69,7 +69,7 @@ export function AnalyticsPage() {
         <StatCard label="SMS cost" value={formatKes(t.smsCostKes)} icon={Coins} tone="gold" hint={`${t.notifications} notices`} />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Card className="min-w-0">
           <CardHeader>
             <CardTitle>Delivery over time</CardTitle>
@@ -86,7 +86,7 @@ export function AnalyticsPage() {
                     <XAxis dataKey="date" tickFormatter={dayLabel} {...axis} minTickGap={16} />
                     <YAxis {...axis} allowDecimals={false} />
                     <Tooltip content={<ChartTooltip labelFormat={dayLabel} />} cursor={{ fill: c.grid, opacity: 0.5 }} />
-                    <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12 }} />
+                    <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12 }} formatter={(v) => <span className="text-muted-foreground">{v}</span>} />
                     <Bar dataKey="inApp" name="In-app" stackId="a" fill={c.inApp} stroke={c.surface} strokeWidth={2} maxBarSize={28} />
                     <Bar dataKey="sms" name="SMS" stackId="a" fill={c.sms} stroke={c.surface} strokeWidth={2} maxBarSize={28} />
                     <Bar dataKey="failed" name="Failed" stackId="a" fill={c.failed} stroke={c.surface} strokeWidth={2} radius={[4, 4, 0, 0]} maxBarSize={28} />
@@ -113,7 +113,7 @@ export function AnalyticsPage() {
                     <XAxis type="number" {...axis} allowDecimals={false} />
                     <YAxis type="category" dataKey="label" width={52} {...axis} />
                     <Tooltip content={<ChartTooltip labelFormat={(code) => data.bySchool.find((s) => s.code === code)?.name ?? code} />} cursor={{ fill: c.grid, opacity: 0.5 }} />
-                    <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12 }} />
+                    <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 12 }} formatter={(v) => <span className="text-muted-foreground">{v}</span>} />
                     <Bar dataKey="inApp" name="In-app" stackId="a" fill={c.inApp} stroke={c.surface} strokeWidth={2} />
                     <Bar dataKey="sms" name="SMS" stackId="a" fill={c.sms} stroke={c.surface} strokeWidth={2} />
                     <Bar dataKey="failed" name="Failed" stackId="a" fill={c.failed} stroke={c.surface} strokeWidth={2} radius={[0, 4, 4, 0]} />

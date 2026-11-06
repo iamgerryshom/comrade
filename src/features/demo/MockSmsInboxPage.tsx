@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BatteryFull, ChevronLeft, MessageSquareText, Signal, Smartphone, Wifi } from 'lucide-react'
 import { format } from 'date-fns'
@@ -18,15 +18,18 @@ export function MockSmsInboxPage() {
     for (const s of data ?? []) m.set(s.to, [...(m.get(s.to) ?? []), s])
     return [...m.entries()].sort((a, b) => b[1][0].createdAt.getTime() - a[1][0].createdAt.getTime())
   }, [data])
+  const [params] = useSearchParams()
+  const forUid = params.get('uid')
+  const uidPhone = forUid ? (data ?? []).find((s) => s.userId === forUid)?.to : undefined
   const [phone, setPhone] = useState('')
-  const selected = phone || phones[0]?.[0] || ''
+  const selected = phone || uidPhone || phones[0]?.[0] || ''
   const messages = (phones.find(([p]) => p === selected)?.[1] ?? []).slice().reverse()
   const demoNames = new Set(DEMO_ACCOUNTS.map((a) => a.uid))
 
   return (
     <div>
       <PageHeader title="Mock SMS inbox" icon={Smartphone} description="What each phone number received from the SMS fallback. Updates live." />
-      <div className="grid gap-8 lg:grid-cols-[18rem_1fr]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_1fr]">
         <div>
           <label htmlFor="sms-phone" className="mb-2 block text-sm font-medium">
             Phone number

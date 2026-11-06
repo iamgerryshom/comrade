@@ -99,7 +99,7 @@ export function AudienceBuilder({ value, onChange, error }: { value: AudienceRul
   const setType = (t: TargetType) => onChange({ targetType: t, targetId: t === 'INSTITUTION' ? INSTITUTION_SCOPE.id : '' })
 
   return (
-    <fieldset className="space-y-4">
+    <fieldset className="min-w-0 space-y-4">
       <legend className="sr-only">Audience</legend>
       <div>
         <Label className="mb-2 block">Send to</Label>
@@ -171,7 +171,7 @@ export function AudienceBuilder({ value, onChange, error }: { value: AudienceRul
         </div>
       )}
       {value.targetType === 'COURSE_YEAR' && (
-        <div className="grid gap-3 sm:grid-cols-[1fr_9rem]">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem]">
           <div className="space-y-2">
             <Label htmlFor="aud-cy">Course</Label>
             <Combobox id="aud-cy" value={value.targetId} onChange={(id) => onChange({ ...value, targetId: id, yearOfStudy: undefined })} placeholder="Choose a course…" options={options.courseYears.map((c) => ({ value: c.id, label: c.name, hint: c.code }))} />

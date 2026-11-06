@@ -85,7 +85,7 @@ function UserEditor({ user, onDone }: { user: User | null; onDone: () => void })
 
   return (
     <form onSubmit={handleSubmit(submit)} className="space-y-4" noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="u-name">Full name</Label>
           <Input id="u-name" {...register('name')} aria-invalid={!!formState.errors.name} />
@@ -230,7 +230,7 @@ function AssignPosition({ student, onDone }: { student: User; onDone: () => void
   }
   return (
     <form onSubmit={handleSubmit(submit)} className="space-y-4" noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="p-pos">Position</Label>
           <NativeSelect

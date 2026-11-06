@@ -172,7 +172,7 @@ export function ComposePage() {
         }
       />
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="grid gap-6 lg:grid-cols-[1fr_22rem]">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_22rem]">
         <div className="min-w-0 space-y-6">
           <Card>
             <CardHeader>
@@ -199,7 +199,7 @@ export function ComposePage() {
                 <Textarea id="body" rows={6} placeholder="Write the full notice. The SMS fallback uses a shortened version." aria-invalid={!!formState.errors.body} {...register('body')} />
                 <FieldError>{formState.errors.body?.message}</FieldError>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="category">Category</Label>
                   <NativeSelect id="category" {...register('category')}>

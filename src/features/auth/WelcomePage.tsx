@@ -25,7 +25,7 @@ export function WelcomePage() {
       </header>
 
       <main>
-        <section className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-6 sm:px-6 lg:grid-cols-2 lg:pt-16">
+        <section className="relative mx-auto grid grid-cols-1 max-w-6xl items-center gap-10 px-4 pb-16 pt-6 sm:px-6 lg:grid-cols-2 lg:pt-16">
           <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold-soft px-3 py-1 text-xs font-medium text-gold-foreground dark:text-gold">
@@ -77,7 +77,7 @@ export function WelcomePage() {
         </section>
 
         <section id="how" className="border-t bg-card/50">
-          <div className="mx-auto grid max-w-6xl gap-4 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+          <div className="mx-auto grid grid-cols-1 max-w-6xl gap-4 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
             {FEATURES.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="rounded-xl border bg-card p-5 shadow-soft">
                 <span className="mb-3 inline-flex size-10 items-center justify-center rounded-xl bg-primary-soft text-primary" aria-hidden>

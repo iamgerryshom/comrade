@@ -116,7 +116,7 @@ export function InboxPage() {
             </TabsList>
           </Tabs>
         </div>
-        <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search notices" className="pl-9" aria-label="Search notices" />
@@ -188,7 +188,7 @@ export function InboxPage() {
         }
       />
       {tabletUp ? (
-        <div className="grid gap-6 md:grid-cols-[minmax(0,22rem)_1fr] xl:grid-cols-[minmax(0,26rem)_1fr]">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,22rem)_1fr] xl:grid-cols-[minmax(0,26rem)_1fr]">
           {list}
           <div className="min-w-0">
             <div className="sticky top-20 rounded-xl border bg-card p-5 shadow-soft">

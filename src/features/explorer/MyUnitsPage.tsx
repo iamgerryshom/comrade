@@ -31,7 +31,7 @@ export function MyUnitsPage() {
             <CardTitle className="mt-2 text-lg">{course.name}</CardTitle>
           </CardHeader>
           <CardContent>
-            <dl className="grid gap-3 text-sm sm:grid-cols-3">
+            <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
               <div className="flex items-start gap-2">
                 <Library className="mt-0.5 size-4 text-muted-foreground" />
                 <div>
@@ -62,7 +62,7 @@ export function MyUnitsPage() {
       {data.units.length === 0 ? (
         <EmptyState icon={BookOpen} title="No units yet" description="Your units will show here once you're enrolled for the semester." />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {data.units.map((u) => (
             <li key={u.id}>
               <Card className="h-full p-4">

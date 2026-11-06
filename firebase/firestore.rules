@@ -1,0 +1,108 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Comrade – DRAFT Firestore security rules (not deployed yet; Phase 9).
+//
+// Mirrors src/core/permissions.ts. Custom claims on the ID token:
+//   { role, userType, scopes: [{type,id,yearOfStudy?}], positions: [...] }
+//
+// Principle: anything that needs scope logic (sending, audience resolution,
+// student lookup, member lists, analytics, admin) goes through Callable Cloud
+// Functions, which run the same TypeScript permission module. Clients only read
+// their own data and make a few tightly-limited writes.
+// ─────────────────────────────────────────────────────────────────────────────
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function claims() { return request.auth.token; }
+    function role() { return claims().role; }
+    function isStaff() { return signedIn() && claims().userType == 'STAFF'; }
+    function isAdmin() { return isStaff() && role() in ['SUPER_ADMIN', 'INSTITUTION_ADMIN']; }
+    function isSuperAdmin() { return isStaff() && role() == 'SUPER_ADMIN'; }
+    function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
+
+    // ── Hierarchy: public to signed-in users, written only by admin functions ──
+    match /institutions/{id} { allow read: if signedIn(); allow write: if false; }
+    match /schools/{id}      { allow read: if signedIn(); allow write: if false; }
+    match /faculties/{id}    { allow read: if signedIn(); allow write: if false; }
+    match /courses/{id}      { allow read: if signedIn(); allow write: if false; }
+    match /units/{id}        { allow read: if signedIn(); allow write: if false; }
+    match /courseUnits/{id}  { allow read: if signedIn(); allow write: if false; }
+    match /unitAssignments/{id} { allow read: if signedIn(); allow write: if false; }
+
+    // ── Users: full documents (incl. phone) only for the owner and admins ──
+    // Other users are seen through Callable Functions that mask/strip private fields.
+    match /users/{userId} {
+      allow read: if signedIn() && (userId == uid() || isAdmin());
+      // Owners may edit only their profile preferences
+      allow update: if signedIn() && userId == uid()
+        && onlyChanges(['name', 'phone', 'smsOptOut', 'onboardedAt', 'photoURL'])
+        && (request.resource.data.phone == null || request.resource.data.phone.matches('^\\+254(7|1)[0-9]{8}$'));
+      allow create, delete: if false; // adminSaveUser function
+
+      // FCM web push tokens, per browser
+      match /devices/{deviceId} {
+        allow read, write: if signedIn() && userId == uid();
+      }
+    }
+
+    match /leadershipPositions/{id} {
+      allow read: if signedIn() && (resource.data.userId == uid() || isAdmin());
+      allow write: if false; // adminAssignPosition / adminEndPosition functions
+    }
+
+    match /enrollments/{id} {
+      allow read: if signedIn() && (resource.data.userId == uid() || isAdmin());
+      allow write: if false;
+    }
+
+    // ── Notifications ──
+    // Delivery ids are deterministic in Firebase: `${notificationId}_${recipientUid}`,
+    // so a recipient's right to read a notice is one exists() check.
+    match /notifications/{id} {
+      allow read: if signedIn() && (
+        resource.data.senderId == uid()
+        || isAdmin()
+        || (resource.data.status == 'SENT' && exists(/databases/$(database)/documents/deliveries/$(id + '_' + uid())))
+      );
+      // Drafts are the only client-written notifications. Sending is the sendNotification function.
+      allow create: if signedIn() && request.resource.data.senderId == uid() && request.resource.data.status == 'DRAFT';
+      allow update: if signedIn() && resource.data.senderId == uid() && resource.data.status == 'DRAFT'
+        && request.resource.data.status == 'DRAFT' && request.resource.data.senderId == uid();
+      allow delete: if signedIn() && resource.data.senderId == uid() && resource.data.status == 'DRAFT';
+    }
+
+    // ── Deliveries: one per recipient ──
+    match /deliveries/{id} {
+      // Recipients read their own (inbox = where userId == uid); senders read their timeline.
+      allow read: if signedIn() && (resource.data.userId == uid() || resource.data.senderId == uid() || isAdmin());
+      // Recipients may only stamp ackedAt / readAt (once, with the server time) and archive.
+      // Status is derived server-side (onDeliveryUpdate trigger). ACKs from the service worker
+      // go through the ackDelivery function.
+      allow update: if signedIn() && resource.data.userId == uid()
+        && onlyChanges(['ackedAt', 'readAt', 'archivedAt', 'updatedAt'])
+        && (!('ackedAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || (resource.data.ackedAt == null && request.resource.data.ackedAt == request.time))
+        && (!('readAt' in request.resource.data.diff(resource.data).affectedKeys())
+            || (resource.data.readAt == null && request.resource.data.readAt == request.time));
+      allow create, delete: if false;
+    }
+
+    // ── SMS log, audit log: admins read, nobody writes from the client ──
+    match /smsMessages/{id} { allow read: if isAdmin(); allow write: if false; }
+    match /auditLogs/{id}   { allow read: if isAdmin(); allow write: if false; }
+
+    match /savedGroups/{id} {
+      allow read, delete: if signedIn() && resource.data.ownerId == uid();
+      allow create: if signedIn() && request.resource.data.ownerId == uid();
+      allow update: if signedIn() && resource.data.ownerId == uid() && request.resource.data.ownerId == uid();
+    }
+
+    match /settings/{id} {
+      allow read: if signedIn();
+      allow write: if false; // updateSettings function (SUPER_ADMIN), audited
+    }
+  }
+}

@@ -76,7 +76,7 @@ export function LoginPage() {
           </Link>
         </Button>
       </div>
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-12 pt-2 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-10 lg:pt-8">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-6 px-4 pb-12 pt-2 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-10 lg:pt-8">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           <Card>
             <CardHeader>
@@ -121,7 +121,7 @@ export function LoginPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="grid gap-2 sm:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {DEMO_ACCOUNTS.map((a) => {
                     const Icon = DEMO_ICON[a.key] ?? UserRound
                     return (

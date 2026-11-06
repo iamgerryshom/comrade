@@ -49,7 +49,7 @@ export function SentPage() {
       ) : !data?.length ? (
         <EmptyState icon={Send} title="Nothing sent yet" description="Notices you send will appear here with live delivery stats." action={<Button asChild><Link to="/compose">Compose a notice</Link></Button>} />
       ) : (
-        <ul className="grid gap-3 lg:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {data.map((n, i) => (
             <motion.li key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.02 }}>
               <Link to={`/sent/${n.id}`} className="group flex h-full flex-col rounded-xl border bg-card p-4 shadow-soft transition-colors hover:border-primary/40">

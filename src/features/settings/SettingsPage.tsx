@@ -47,7 +47,7 @@ export function SettingsPage() {
             </CardTitle>
             <CardDescription>How long to wait for a device to confirm before falling back to SMS. Use a short value (e.g. 15s) for demos.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="ack">ACK timeout (seconds)</Label>
               <Input id="ack" type="number" min={5} max={3600} {...register('ackTimeoutSeconds', { valueAsNumber: true })} />
@@ -63,7 +63,7 @@ export function SettingsPage() {
             </CardTitle>
             <CardDescription>Provider keys are never stored here: they live in Cloud Functions secrets.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="sid">Sender ID</Label>
               <Input id="sid" maxLength={11} {...register('smsSenderId')} />
@@ -83,7 +83,7 @@ export function SettingsPage() {
             </CardTitle>
             <CardDescription>Notifications per day for each leadership position.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {(Object.keys(POSITION_LABEL) as PositionType[]).map((p) => (
               <div key={p} className="space-y-2">
                 <Label htmlFor={`rl-${p}`}>{POSITION_LABEL[p]}</Label>

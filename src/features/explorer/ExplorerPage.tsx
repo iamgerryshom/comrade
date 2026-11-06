@@ -187,7 +187,7 @@ export function ExplorerPage() {
   return (
     <div>
       <PageHeader title="Explorer" icon={Layers} description="Institution → School → Faculty / Department → Course → Unit. You see what's inside your scope." />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,26rem)_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,26rem)_1fr]">
         <Card className="p-2 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto">
           <div className="p-2">
             <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter courses…" aria-label="Filter the tree" />

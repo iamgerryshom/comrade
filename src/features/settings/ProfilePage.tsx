@@ -66,7 +66,7 @@ export function ProfilePage() {
           <div className="min-w-0 flex-1">
             <h2 className="text-xl font-semibold">{profile.name}</h2>
             <div className="mt-1 flex flex-wrap items-center gap-2">
-              <UserTypeBadge userType={profile.userType} />
+              {(profile.userType === 'STAFF' || claims.positions.length > 0) && <UserTypeBadge userType={profile.userType} />}
               <RoleBadge role={profile.role} userType={profile.userType} positions={claims.positions} />
               <span className="font-mono text-xs text-muted-foreground">{profile.admissionNumber ?? profile.staffNumber}</span>
             </div>
@@ -82,7 +82,7 @@ export function ProfilePage() {
             <CardDescription>If your device doesn't confirm a notice in time, Comrade sends a short SMS to this number.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="p-name">Display name</Label>
                 <Input id="p-name" {...register('name')} />
