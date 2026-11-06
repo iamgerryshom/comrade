@@ -1,4 +1,6 @@
 import { Link } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
+import { PullToRefresh } from '@/components/layout/PullToRefresh'
 import { m } from 'framer-motion'
 import { CalendarClock, ChevronRight, PenSquare, Send, Users } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
@@ -30,8 +32,9 @@ export function DeliveryBar({ counts, className }: { counts: DeliveryCounts; cla
 export function SentPage() {
   const { profile } = useAuth()
   const { data, isPending: isLoading } = useSent(profile?.uid)
+  const qc = useQueryClient()
   return (
-    <div>
+    <PullToRefresh onRefresh={() => qc.refetchQueries({ type: 'active' })}>
       <PageHeader
         title="Sent notices"
         icon={Send}
@@ -82,6 +85,6 @@ export function SentPage() {
           ))}
         </ul>
       )}
-    </div>
+    </PullToRefresh>
   )
 }

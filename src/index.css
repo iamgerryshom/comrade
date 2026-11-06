@@ -114,6 +114,43 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+  /* App feel: no grey tap flash, no double-tap zoom delay, no rubber-band reload fighting our pull-to-refresh */
+  html {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overscroll-behavior-y: none;
+  }
+  /* Buttons, nav and chips aren't text: don't select them on long-press */
+  button,
+  nav,
+  [role='tab'],
+  [role='radio'],
+  label {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  img,
+  svg {
+    -webkit-user-drag: none;
+  }
+  /* Installed app: no stray scroll bars on desktop windows */
+  @media (display-mode: standalone) {
+    body {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    p,
+    h1,
+    h2,
+    h3,
+    input,
+    textarea,
+    article,
+    [data-selectable] {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+  }
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;

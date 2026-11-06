@@ -1,8 +1,10 @@
 import { Suspense, useMemo, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router'
+import { Link, NavLink, Outlet, useLocation, useNavigate, useNavigationType } from 'react-router'
 import { AnimatePresence, m } from 'framer-motion'
 import {
+  ArrowLeft,
   Bell,
+  Download,
   ChevronsLeft,
   ChevronsRight,
   LogOut,
@@ -21,6 +23,8 @@ import { useInbox } from '@/hooks/data'
 import { useIsOnline, useSimulatedOffline } from '@/hooks/useOnline'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
+import { haptic } from '@/lib/push'
+import { useIsTabletUp } from '@/hooks/useMediaQuery'
 import { env } from '@/lib/env'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/overlays'
@@ -29,9 +33,23 @@ import { ErrorBoundary, PageSkeleton, RoleBadge, UserAvatar, UserTypeBadge } fro
 import { DeliveryAgent } from '@/features/delivery/DeliveryAgent'
 import { NotificationPermissionPrompt } from '@/features/delivery/NotificationPermissionPrompt'
 import { DemoPanel } from '@/features/demo/DemoPanel'
+import { InstallBanner, useInstallAction } from '@/features/install/InstallPrompt'
+import { ScrollManager } from './ScrollManager'
 import { GROUP_LABEL, NAV, type NavItem } from './nav'
 import { CommandPalette } from './CommandPalette'
 import { Logo } from './Logo'
+
+/** Detail screens get a native back arrow + title in the top bar on phones. */
+const DETAIL_ROUTES: Array<[RegExp, string, string]> = [
+  [/^\/notice\//, 'Notice', '/inbox'],
+  [/^\/n\//, 'Notice', '/inbox'],
+  [/^\/sent\/.+/, 'Delivery', '/sent'],
+]
+function useDetailRoute() {
+  const { pathname } = useLocation()
+  const hit = DETAIL_ROUTES.find(([re]) => re.test(pathname))
+  return hit ? { title: hit[1], parent: hit[2] } : null
+}
 
 function useNavItems() {
   const { can, claims } = useAuth()
@@ -134,7 +152,8 @@ function BottomNav() {
           <li key={item.to}>
             <NavLink
               to={item.to}
-              className={({ isActive }) => cn('relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground', isActive && 'text-primary')}
+              onClick={() => haptic()}
+              className={({ isActive }) => cn('relative flex h-16 select-none flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground', isActive && 'text-primary')}
             >
               {({ isActive }) => (
                 <>
@@ -182,16 +201,43 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
   const unread = useUnread()
   const navigate = useNavigate()
   const isStudent = claims?.userType === 'STUDENT'
+  const detail = useDetailRoute()
+  const install = useInstallAction()
   if (!profile || !claims) return null
+  const goBack = () => {
+    haptic()
+    if (window.history.state?.idx > 0) navigate(-1)
+    else navigate(detail?.parent ?? '/home')
+  }
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b bg-background/85 px-3 backdrop-blur safe-top sm:px-4 lg:px-6">
-      <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open menu">
-        <Menu className="size-5" />
-      </Button>
-      <Link to="/home" className="lg:hidden" aria-label="Comrade home">
-        <Logo compact className="sm:hidden" />
-        <Logo className="hidden sm:flex" />
-      </Link>
+    <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur safe-top">
+      <div className="flex h-14 items-center gap-1 px-2 sm:h-16 sm:gap-2 sm:px-4 lg:px-6">
+      {detail ? (
+        <>
+          <Button variant="ghost" size="icon" className="sm:hidden" onClick={goBack} aria-label="Back">
+            <ArrowLeft className="size-5" />
+          </Button>
+          <p className="truncate text-base font-semibold sm:hidden">{detail.title}</p>
+        </>
+      ) : (
+        <>
+          <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open menu">
+            <Menu className="size-5" />
+          </Button>
+          <Link to="/home" className="lg:hidden" aria-label="Comrade home">
+            <Logo compact className="sm:hidden" />
+            <Logo className="hidden sm:flex" />
+          </Link>
+        </>
+      )}
+      <span className={cn('hidden', detail && 'sm:contents')}>
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open menu">
+          <Menu className="size-5" />
+        </Button>
+        <Link to="/home" className="lg:hidden" aria-label="Comrade home">
+          <Logo />
+        </Link>
+      </span>
 
       <button
         type="button"
@@ -250,6 +296,11 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
             <DropdownMenuItem onSelect={() => navigate('/profile')}>
               <UserIcon /> Profile & preferences
             </DropdownMenuItem>
+            {install.available && (
+              <DropdownMenuItem onSelect={() => void install.install()}>
+                <Download /> Install Comrade app
+              </DropdownMenuItem>
+            )}
             {env.demoMode && isStudent && (
               <DropdownMenuItem className="sm:hidden" onSelect={(e) => { e.preventDefault(); setSim(!sim) }}>
                 <WifiOff /> Simulate offline: {sim ? 'on' : 'off'}
@@ -264,6 +315,8 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      </div>
+      {install.sheet}
     </header>
   )
 }
@@ -299,6 +352,11 @@ export function AppShell() {
   const [searchOpen, setSearchOpen] = useState(false)
   const items = useNavItems()
   const location = useLocation()
+  const navType = useNavigationType()
+  const tabletUp = useIsTabletUp()
+  const isDetail = DETAIL_ROUTES.some(([re]) => re.test(location.pathname))
+  // Phones: detail screens slide in from the right, going back slides from the left, tabs fade
+  const enter = tabletUp ? { opacity: 0, y: 6 } : navType === 'POP' ? { opacity: 0, x: -28 } : isDetail ? { opacity: 0, x: 28 } : { opacity: 0 }
   const setCol = (v: boolean) => {
     setCollapsed(v)
     localStorage.setItem('comrade.sidebar', v ? 'collapsed' : 'open')
@@ -313,10 +371,11 @@ export function AppShell() {
         <TopBar onMenu={() => setMenuOpen(true)} onSearch={() => setSearchOpen(true)} />
         <OfflineBanner />
         <NotificationPermissionPrompt />
+        <InstallBanner />
         <main id="main" className="pb-bottom-nav mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
           <ErrorBoundary key={location.pathname}>
             <Suspense fallback={<PageSkeleton />}>
-              <m.div key={location.pathname} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+              <m.div key={location.pathname} initial={enter} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}>
                 <Outlet />
               </m.div>
             </Suspense>
@@ -333,6 +392,7 @@ export function AppShell() {
         </DialogContent>
       </Dialog>
       <CommandPalette open={searchOpen} setOpen={setSearchOpen} items={items} />
+      <ScrollManager />
       <DeliveryAgent />
       {env.demoMode && <DemoPanel />}
     </div>

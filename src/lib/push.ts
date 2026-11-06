@@ -45,3 +45,8 @@ export function setUnreadBadge(count: number) {
 export function vibrate(pattern: number | number[]) {
   if ('vibrate' in navigator) navigator.vibrate(pattern)
 }
+
+/** Light haptic feedback on supported phones (no-op elsewhere). */
+export function haptic(kind: 'tap' | 'success' | 'warning' = 'tap') {
+  vibrate(kind === 'tap' ? 8 : kind === 'success' ? [12, 40, 18] : [30, 60, 30])
+}

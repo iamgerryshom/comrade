@@ -92,3 +92,25 @@ test('no horizontal scrolling on key screens', async ({ page }) => {
     expect(overflow, `horizontal overflow on ${path}`).toBeLessThanOrEqual(1)
   }
 })
+
+test('installable app basics: manifest, service worker, native back navigation', async ({ page }) => {
+  await page.goto('/login')
+  const manifest = await page.evaluate(async () => {
+    const href = document.querySelector<HTMLLinkElement>('link[rel=manifest]')!.href
+    return (await fetch(href)).json()
+  })
+  expect(manifest.display).toBe('standalone')
+  expect(manifest.icons.some((i: { purpose: string }) => i.purpose === 'maskable')).toBe(true)
+
+  await demoLogin(page, 'student')
+  await page.goto('/inbox')
+  const firstRow = page.locator('ul[aria-label="Notices"] li button').first()
+  await expect(firstRow).toBeVisible()
+  if ((page.viewportSize()?.width ?? 0) < 640) {
+    await firstRow.click()
+    await expect(page).toHaveURL(/\/notice\//)
+    await page.getByRole('button', { name: 'Back' }).click()
+    await expect(page).toHaveURL(/\/inbox$/)
+  }
+  expect(await page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration()))).toBe(true)
+})

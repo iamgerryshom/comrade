@@ -13,10 +13,10 @@ export function NoticePage() {
   const navigate = useNavigate()
   return (
     <div className="mx-auto max-w-3xl">
-      <Button variant="ghost" size="sm" className="-ml-2 mb-3" onClick={() => (history.length > 1 ? navigate(-1) : navigate('/inbox'))}>
+      <Button variant="ghost" size="sm" className="-ml-2 mb-3 hidden sm:inline-flex" onClick={() => (history.length > 1 ? navigate(-1) : navigate('/inbox'))}>
         <ArrowLeft /> Back
       </Button>
-      <Card className="p-4 sm:p-6">{id && <NoticeDetail notificationId={id} />}</Card>
+      <Card className="border-0 bg-transparent p-0 shadow-none sm:border sm:bg-card sm:p-6 sm:shadow-soft">{id && <NoticeDetail notificationId={id} />}</Card>
     </div>
   )
 }

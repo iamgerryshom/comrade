@@ -49,11 +49,11 @@ export function DemoPanel() {
     <Popover>
       <PopoverTrigger asChild>
         <button
-          className="fixed bottom-20 right-4 z-40 inline-flex h-11 items-center gap-2 rounded-full border border-gold/60 bg-gold px-4 text-sm font-semibold text-gold-foreground shadow-lg hover:brightness-105 sm:bottom-5"
+          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-3 z-40 inline-flex size-11 items-center justify-center gap-2 rounded-full border border-gold/60 bg-gold text-sm font-semibold text-gold-foreground shadow-lg hover:brightness-105 sm:bottom-5 sm:right-4 sm:w-auto sm:px-4"
           aria-label="Open demo panel"
         >
           <FlaskConical className="size-4" aria-hidden />
-          Demo
+          <span className="hidden sm:inline">Demo</span>
         </button>
       </PopoverTrigger>
       <PopoverContent side="top" align="end" className="max-h-[75dvh] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto p-0">

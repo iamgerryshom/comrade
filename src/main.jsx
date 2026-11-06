@@ -4,9 +4,14 @@ import './index.css'
 import App from './App.jsx'
 import { initServices } from './services'
 import { applyTheme } from './hooks/useTheme'
-import { registerServiceWorker, notificationPermission } from './lib/push'
+import { registerServiceWorker } from './lib/push'
+import { captureInstallPrompt } from './lib/install'
 
 applyTheme()
+captureInstallPrompt()
+
+// The service worker makes Comrade installable, opens it offline and handles push
+if (import.meta.env.PROD || location.hostname === 'localhost') addEventListener('load', () => void registerServiceWorker())
 
 const root = createRoot(document.getElementById('root'))
 
@@ -32,9 +37,7 @@ const boot = new Promise((resolve) => {
 
 boot
   .then(() => initServices())
-  .then(() => {
-    if (notificationPermission() === 'granted') void registerServiceWorker()
-  })
+  .then(() => undefined)
   .catch((err) => {
     console.error(err)
     root.render(

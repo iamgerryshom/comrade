@@ -1,6 +1,6 @@
 # Comrade · Kisii University notifications
 
-Comrade is a mobile-first, responsive website that delivers official notices to Kisii University students and staff. **Its key feature: notices reach students even when they're offline.** The site sends the notice in-app (push) and waits for the student's device to confirm receipt (an **ACK**). If no ACK arrives within 60 seconds, Comrade sends an SMS with the key details.
+Comrade is a mobile-first **installable web app** (and responsive website) that delivers official notices to Kisii University students and staff. **Its key feature: notices reach students even when they're offline.** The site sends the notice in-app (push) and waits for the student's device to confirm receipt (an **ACK**). If no ACK arrives within 60 seconds, Comrade sends an SMS with the key details.
 
 This build is **demo-ready and runs entirely on in-memory dummy data**: there is no backend server and no Firebase project yet. Everything sits behind a service layer that switches to Firebase with one environment variable (Phase 9).
 
@@ -14,7 +14,7 @@ This build is **demo-ready and runs entirely on in-memory dummy data**: there is
 4. [Roles & permissions](#roles--permissions)
 5. [Delivery engine & SMS fallback](#delivery-engine--sms-fallback)
 6. [Data model (planned Firestore structure)](#data-model-planned-firestore-structure)
-7. [Responsive website & browser features](#responsive-website--browser-features)
+7. [Installable app (mobile-first) & browser features](#installable-app-mobile-first--browser-features)
 8. [Testing & quality](#testing--quality)
 9. [Environment variables](#environment-variables)
 10. [Phase 9: Firebase hookup](#phase-9-firebase-hookup)
@@ -145,7 +145,8 @@ src/
   hooks/ lib/      data hooks, theme, online status, push helpers, env, query persistence
 firebase/          firestore.rules (draft) · firestore.indexes.json · (functions/ in Phase 9)
 e2e/               Playwright tests
-public/sw.js       push-only service worker
+public/sw.js       service worker: app-shell cache (installable, opens offline) + web push
+public/manifest.webmanifest, public/icons/   install metadata and app icons
 ```
 
 The original Vite entry files (`src/main.jsx`, `src/App.jsx`, `src/index.css`, `src/App.css`, `vite.config.js`, `eslint.config.js`) are kept and were extended in place. All new code is TypeScript (strict).
@@ -239,22 +240,54 @@ The in-memory store already uses these collection names and fields (`src/types/i
 
 ---
 
-## Responsive website & browser features
+## Installable app (mobile-first) & browser features
 
-- **Mobile-first**, tested at 360×800, 768×1024 and 1440×900:
-  - Phones: top bar, **bottom navigation** (Home · Inbox · Units/Compose · Profile), single column, 44 px+ tap targets, tables become card lists, dialogs become full-width bottom sheets.
-  - Tablets: two-column inbox (list + notice).
-  - Desktop: collapsible sidebar, multi-column dashboards, sortable/filterable/paginated tables.
-  - No horizontal scrolling on any screen; an end-to-end test checks this.
-- **Service worker for web push only** (`public/sw.js`), with no offline caching and no install.
-  - It shows a browser notification, and tapping it opens `/notice/{id}`.
-  - With real FCM (Phase 9) the push payload carries a short-lived signed ACK token, so the worker can confirm receipt even when no Comrade tab is open.
-- **Notification permission** is requested politely **after login**, with an explanation, never on first page load.
-- **"You're offline" banner** reminds students that urgent notices still reach them by SMS. The inbox, notices, units and profile are cached in IndexedDB (TanStack Query persistence) and still show while offline.
-- **Light pages.** Route-level code splitting, an instant HTML splash, lazily loaded animation features and charts, demo data generated in a Web Worker, and Inter variable font (latin subset only).
-- **Accessible.** Keyboard navigation, visible focus rings, a skip link, ARIA labels on icon buttons, colour never used alone (status chips have icons and text), a table view for charts, reduced-motion support, full dark mode.
+Comrade is **one codebase that works as a website and installs as an app**, on phones (the main audience) and on desktop. There's no app store.
 
----
+### Installing it
+
+| Where | How |
+|---|---|
+| **Android** (Chrome, Edge, Samsung Internet) | Tap **Install** on the in-app banner, or browser menu → **Install app** / **Add to Home screen** |
+| **iPhone / iPad** (Safari) | Tap **Install** → Comrade shows the steps: **Share → Add to Home Screen → Add** |
+| **Desktop** (Chrome / Edge) | The **Install** button in the address bar, the in-app banner, or user menu → **Install Comrade app**. It then opens in its own window from the Start menu or taskbar |
+
+The banner appears until Comrade is installed; dismissing it hides it for a week. "Install app" is also available in the user menu, on Profile, and on the welcome page. Once installed, Comrade opens **full-screen** (no browser bar) with a green splash and status bar, its own icon (including a maskable Android icon), and long-press **shortcuts** (Inbox, Compose, My units).
+
+### Feels like a native app on phones
+
+- **App shell**: fixed top bar and bottom tab bar (Home · Inbox · Units/Compose · Profile). Only the content changes between screens, with no page reloads.
+- **Native navigation**: detail screens slide in from the right with a **back arrow and title** in the top bar. Going back slides the other way. The **Android back button** and the browser back button both work, and **scroll position is restored** when you go back. New screens start at the top.
+- **Gestures**:
+  - **pull to refresh** (Home, Inbox, Sent)
+  - in the inbox, **swipe right to mark read** and **swipe left to archive**, with an **Undo** toast
+  - **long-press** a notice for a quick-actions sheet (right-click does the same on desktop)
+- **Bottom sheets** instead of centred pop-ups on phones, and **haptic feedback** on key actions on Android.
+- **Touch polish**: no grey tap flash, no double-tap zoom delay, no accidental text selection on buttons and tabs, 44 px+ tap targets, and safe-area insets for notches and home indicators.
+- **Offline**: the service worker caches the app shell, so the installed app opens with no connection. Saved notices, units and the profile come from the IndexedDB query cache, and a **"You're offline"** banner reminds students that urgent notices still arrive by SMS.
+- **Notifications**: system notifications with the Comrade icon, an **unread badge** on the app icon where supported, louder vibration for HIGH/URGENT, and tapping a notification opens that notice (`/notice/{id}`). Permission is requested politely after login, never on first load.
+
+### Desktop and tablet
+
+- **Tablets**: two-column inbox (list + notice).
+- **Desktop**: collapsible sidebar, multi-column dashboards, sortable/filterable/paginated tables, and the ⌘K palette.
+- No horizontal scrolling at any size (checked by an end-to-end test).
+
+### Under the hood
+
+- `public/manifest.webmanifest`, icons in `public/icons/` (192/512, maskable, apple-touch).
+- `public/sw.js`: network-first navigations with an app-shell fallback, cache-first for hashed `/assets/*`, and web push. With real FCM (Phase 9) the push carries a signed ACK token, so the worker confirms receipt even when Comrade is closed.
+- `src/lib/install.ts`: install-prompt capture, standalone and iOS detection.
+- `src/components/layout/PullToRefresh.tsx`, `ScrollManager.tsx`, and `src/hooks/useLongPress.ts`.
+- Light on mobile data: route-level code splitting, an instant HTML splash, lazy charts and animation features, and the Inter font (latin subset). The mock demo data is generated in a Web Worker.
+- **Accessibility**: keyboard navigation, focus rings, a skip link, ARIA labels, status chips that never rely on colour alone, table views for charts, reduced-motion support, and full dark mode.
+
+### Trying it on your phone
+
+Installing (and push notifications) needs **HTTPS** or `localhost`. `npm run dev` on a LAN IP (`http://192.168.x.x:5173`) runs the app in the phone browser, but it can't be installed there. To test installing on a real phone:
+- Option 1: deploy to Firebase Hosting (Phase 9).
+- Option 2: use an HTTPS tunnel (e.g. `npx cloudflared tunnel --url http://localhost:4173` after `npm run build && npm run preview`).
+- Option 3: on Android, use Chrome's `chrome://inspect` port forwarding so the phone opens it as `localhost`.
 
 ## Testing & quality
 
@@ -285,10 +318,11 @@ The in-memory store already uses these collection names and fields (`src/types/i
     - drafts
     - auth
   - **Generator:** deterministic, with the expected volumes.
-- **Playwright** (`npm run test:e2e`) at phone, tablet and desktop sizes:
+- **Playwright** (`npm run test:e2e`) at phone, tablet and desktop sizes (12 runs):
   - a lecturer sends to a unit; student A (online) shows **Delivered**; student B (**Simulate offline**) gets **exactly one** SMS in the Mock SMS inbox after an 8 s timeout
   - the 403 guard
   - no horizontal scrolling on key screens
+  - installable-app basics: manifest, service worker, back arrow returns to the inbox
 - **TypeScript strict, ESLint clean.**
 - **Lighthouse** (production build, simulated mobile: slow 4G, 4× CPU) on `/` and `/login`: **Accessibility 100 · Best practices 100 · SEO 91 · Performance ≈ 55–62**. Performance is held back mainly by the *in-browser mock backend*: it generates and holds about 20,000 demo records and runs the "server" in the page. In Firebase mode that work disappears (data comes from Firestore), and 90+ is the target to re-measure in Phase 9. Already done for it: instant HTML splash, data generation in a Web Worker, mock start-up deferred on public pages, route-level code splitting, a lazy shell and animations (main JS ≈ 82 kB gzipped).
 
@@ -357,6 +391,7 @@ VITE_FIREBASE_VAPID_KEY=
 - **Opening counts as an ACK.** Reading a notice in the app also records the device ACK if none arrived yet.
 - **Demo persistence.** "Keep demo data after refresh" uses **IndexedDB** rather than localStorage, because the snapshot (~20k records) exceeds localStorage's ~5 MB limit.
 - **Web push in mock mode.** In mock mode a "push" reaches only open Comrade tabs (BroadcastChannel). A fully closed browser can't receive anything until real FCM web push (Phase 9). In the demo, "offline" therefore means the **Simulate offline** toggle or no open tab, both of which correctly trigger the SMS fallback.
+- **Installable app.** Your later request ("make it app like … installable") replaces the earlier "no PWA / no manifest" rule. It's a web app manifest + service worker; there's still no native app or app store.
 - **Template files.** The original Vite template (`App.jsx`, `main.jsx`, CSS, config) was kept and extended in place. The Vite logo favicon was replaced with the Comrade mark, and the unused template images in `src/assets/` and `public/icons.svg` were left untouched.
 
 ---

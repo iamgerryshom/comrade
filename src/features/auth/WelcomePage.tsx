@@ -1,9 +1,10 @@
 import { Link, Navigate } from 'react-router'
 import { m } from 'framer-motion'
-import { ArrowRight, BellRing, CheckCheck, Layers, MessageSquareText, ShieldCheck, Smartphone, WifiOff } from 'lucide-react'
+import { ArrowRight, BellRing, Download, CheckCheck, Layers, MessageSquareText, ShieldCheck, Smartphone, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/layout/Logo'
 import { useAuth } from './AuthProvider'
+import { useInstallAction } from '@/features/install/InstallPrompt'
 
 const FEATURES = [
   { icon: BellRing, title: 'Instant notices', body: 'Lecturers, departments and student leaders reach exactly the right students in seconds.' },
@@ -14,6 +15,7 @@ const FEATURES = [
 
 export function WelcomePage() {
   const { status } = useAuth()
+  const install = useInstallAction()
   if (status === 'signedIn') return <Navigate to="/home" replace />
   return (
     <div className="min-h-dvh overflow-x-hidden">
@@ -43,9 +45,15 @@ export function WelcomePage() {
                   Get started <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href="#how">How it works</a>
-              </Button>
+              {install.available ? (
+                <Button size="lg" variant="outline" onClick={() => void install.install()}>
+                  <Download /> Install the app
+                </Button>
+              ) : (
+                <Button asChild size="lg" variant="outline">
+                  <a href="#how">How it works</a>
+                </Button>
+              )}
             </div>
           </m.div>
 
@@ -90,6 +98,7 @@ export function WelcomePage() {
           </div>
         </section>
       </main>
+      {install.sheet}
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">Comrade · Kisii University notification service (demo build)</footer>
     </div>
   )

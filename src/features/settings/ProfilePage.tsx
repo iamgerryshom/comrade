@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { BellRing, Laptop, MessageSquareText, Moon, Monitor, Sun, Trash2, User, WifiOff } from 'lucide-react'
+import { BellRing, Download, Laptop, MessageSquareText, Moon, Monitor, Sun, Trash2, User, WifiOff } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useDevices, useHierarchyIndex, useMyPositions, useUpdateProfile } from '@/hooks/data'
 import { useSimulatedOffline } from '@/hooks/useOnline'
@@ -14,6 +14,7 @@ import { isPositionActive } from '@/core/permissions'
 import { notificationPermission, requestNotificationPermission } from '@/lib/push'
 import { env } from '@/lib/env'
 import { PageHeader, RoleBadge, UserAvatar, UserTypeBadge } from '@/components/common'
+import { useInstallAction } from '@/features/install/InstallPrompt'
 import { Button } from '@/components/ui/button'
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, FieldError, Input, Label, Switch } from '@/components/ui/primitives'
 import { cn, errorMessage, shortDate, timeAgo } from '@/lib/utils'
@@ -35,6 +36,7 @@ export function ProfilePage() {
   const [sim, setSim] = useSimulatedOffline()
   const [perm, setPerm] = useState(notificationPermission())
   const deviceId = getServices().devices.getDeviceId()
+  const install = useInstallAction()
   const { register, handleSubmit, reset, control, formState } = useForm<Form>({ resolver: zodResolver(form) })
 
   useEffect(() => {
@@ -124,6 +126,21 @@ export function ProfilePage() {
           <CardDescription>Each browser you use confirms notices on your behalf.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center">
+            <Download className="size-5 text-muted-foreground" />
+            <div className="flex-1 text-sm">
+              <p className="font-medium">Comrade app</p>
+              <p className="text-muted-foreground">
+                {install.state.standalone ? "You're using the installed app." : install.available ? 'Install Comrade to open it from your home screen or desktop, full-screen.' : 'Use your browser menu → "Install app" / "Add to Home screen".'}
+              </p>
+            </div>
+            {install.available && (
+              <Button variant="outline" onClick={() => void install.install()}>
+                Install
+              </Button>
+            )}
+            {install.sheet}
+          </div>
           <div className="flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center">
             <BellRing className="size-5 text-muted-foreground" />
             <div className="flex-1 text-sm">

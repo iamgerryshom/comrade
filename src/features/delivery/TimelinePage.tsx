@@ -81,7 +81,7 @@ export function TimelinePage() {
   const total = counts.total
   return (
     <div>
-      <Button variant="ghost" size="sm" className="-ml-2 mb-3" asChild>
+      <Button variant="ghost" size="sm" className="-ml-2 mb-3 hidden sm:inline-flex" asChild>
         <Link to="/sent">
           <ArrowLeft /> Sent notices
         </Link>

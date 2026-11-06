@@ -26,6 +26,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/components/ui/primitives'
 import { formatKes, pct, shortDate, timeAgo } from '@/lib/utils'
 import { DeliveryBar } from '@/features/delivery/SentPage'
+import { PullToRefresh } from '@/components/layout/PullToRefresh'
+import { useQueryClient } from '@tanstack/react-query'
 
 function greeting() {
   const h = new Date().getHours()
@@ -244,6 +246,7 @@ function AdminLinks() {
 export function HomePage() {
   const { profile, claims, can, isLeader } = useAuth()
   const { data: inbox } = useInbox(profile?.uid)
+  const qc = useQueryClient()
   if (!profile || !claims) return null
   const sender = canSendAtAll(claims)
   const isAdmin = can('user.manage')
@@ -251,6 +254,7 @@ export function HomePage() {
   const firstName = profile.name.replace(/^(Dr\.|Prof\.|Mr\.|Ms\.)\s+/, '').split(' ')[0]
 
   return (
+    <PullToRefresh onRefresh={() => qc.refetchQueries({ type: 'active' })}>
     <div className="space-y-6">
       <m.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -302,5 +306,6 @@ export function HomePage() {
         {(profile.userType === 'STUDENT' || profile.role === 'LECTURER') && <MyUnitsCard />}
       </div>
     </div>
+    </PullToRefresh>
   )
 }
