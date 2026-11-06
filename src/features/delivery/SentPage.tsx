@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { CalendarClock, ChevronRight, PenSquare, Send, Users } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useSent } from '@/hooks/data'
@@ -29,7 +29,7 @@ export function DeliveryBar({ counts, className }: { counts: DeliveryCounts; cla
 
 export function SentPage() {
   const { profile } = useAuth()
-  const { data, isLoading } = useSent(profile?.uid)
+  const { data, isPending: isLoading } = useSent(profile?.uid)
   return (
     <div>
       <PageHeader
@@ -51,7 +51,7 @@ export function SentPage() {
       ) : (
         <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {data.map((n, i) => (
-            <motion.li key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.02 }}>
+            <m.li key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.02 }}>
               <Link to={`/sent/${n.id}`} className="group flex h-full flex-col rounded-xl border bg-card p-4 shadow-soft transition-colors hover:border-primary/40">
                 <div className="flex items-start gap-3">
                   <CategoryIcon category={n.category} />
@@ -78,7 +78,7 @@ export function SentPage() {
                 </div>
                 {n.status !== 'SCHEDULED' && <DeliveryBar counts={n.counts} className="mt-2" />}
               </Link>
-            </motion.li>
+            </m.li>
           ))}
         </ul>
       )}

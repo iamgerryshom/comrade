@@ -316,8 +316,8 @@ function AssignPosition({ student, onDone }: { student: User; onDone: () => void
 export function UsersPage() {
   const { can, profile } = useAuth()
   const enabled = can('user.manage')
-  const { data: users, isLoading } = useAdminUsers(enabled)
-  const { data: positions, isLoading: loadingPos } = useAdminPositions(can('role.assign'))
+  const { data: users, isPending: isLoading } = useAdminUsers(enabled)
+  const { data: positions, isPending: loadingPos } = useAdminPositions(can('role.assign'))
   const { setActive, endPosition } = useAdminMutations()
   const h = useHierarchyIndex()
   const [editing, setEditing] = useState<User | null | 'new'>(null)

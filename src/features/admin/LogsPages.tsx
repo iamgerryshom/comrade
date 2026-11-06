@@ -18,7 +18,7 @@ const SMS_BADGE: Record<SmsStatus, string> = {
 
 export function SmsLogsPage() {
   const { can } = useAuth()
-  const { data, isLoading } = useSmsLogs(can('sms_logs.view'))
+  const { data, isPending: isLoading } = useSmsLogs(can('sms_logs.view'))
   const [status, setStatus] = useState<SmsStatus | ''>('')
   const rows = (data ?? []).filter((s) => !status || s.status === status)
   const cost = (data ?? []).reduce((a, s) => a + s.costKes, 0)
@@ -74,7 +74,7 @@ export function SmsLogsPage() {
 
 export function AuditLogPage() {
   const { can } = useAuth()
-  const { data, isLoading } = useAuditLogs(can('audit.view'))
+  const { data, isPending: isLoading } = useAuditLogs(can('audit.view'))
   const [action, setAction] = useState('')
   const actions = [...new Set((data ?? []).map((a) => a.action))].sort()
   const rows = (data ?? []).filter((a) => !action || a.action === action)

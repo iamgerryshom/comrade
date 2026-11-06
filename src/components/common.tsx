@@ -21,7 +21,7 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import type { Category, Delivery, DeliveryStatus, PositionType, Priority, Role, UserType } from '@/types'
 import { CATEGORY_LABEL, POSITION_LABEL, PRIORITY_LABEL, ROLE_LABEL } from '@/core/labels'
 import { cn, initials } from '@/lib/utils'
@@ -275,7 +275,7 @@ export function StatCard({ label, value, icon: Icon, hint, tone = 'default' }: {
     gold: 'bg-gold-soft text-gold-foreground dark:text-gold',
   }
   return (
-    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border bg-card p-4 shadow-soft">
+    <m.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border bg-card p-4 shadow-soft">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">{label}</p>
         <span className={cn('inline-flex size-8 items-center justify-center rounded-lg', tones[tone])} aria-hidden>
@@ -284,7 +284,7 @@ export function StatCard({ label, value, icon: Icon, hint, tone = 'default' }: {
       </div>
       <p className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
       {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
-    </motion.div>
+    </m.div>
   )
 }
 

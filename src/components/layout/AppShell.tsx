@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import {
   Bell,
   ChevronsLeft,
@@ -138,7 +138,7 @@ function BottomNav() {
             >
               {({ isActive }) => (
                 <>
-                  {isActive && <motion.span layoutId="bottom-active" className="absolute top-0 h-0.5 w-10 rounded-full bg-primary" />}
+                  {isActive && <m.span layoutId="bottom-active" className="absolute top-0 h-0.5 w-10 rounded-full bg-primary" />}
                   <span className="relative">
                     <item.icon className="size-[22px]" aria-hidden />
                     {item.to === '/inbox' && unread > 0 && (
@@ -273,7 +273,7 @@ function OfflineBanner() {
   return (
     <AnimatePresence>
       {!online && (
-        <motion.div
+        <m.div
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
@@ -287,7 +287,7 @@ function OfflineBanner() {
               {simulated ? "This device won't confirm new notices, so they'll reach you by SMS." : 'Showing saved notices. Urgent notices still reach you by SMS.'}
             </p>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   )
@@ -316,9 +316,9 @@ export function AppShell() {
         <main id="main" className="pb-bottom-nav mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
           <ErrorBoundary key={location.pathname}>
             <Suspense fallback={<PageSkeleton />}>
-              <motion.div key={location.pathname} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+              <m.div key={location.pathname} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
                 <Outlet />
-              </motion.div>
+              </m.div>
             </Suspense>
           </ErrorBoundary>
         </main>

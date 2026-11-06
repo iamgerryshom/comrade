@@ -12,7 +12,7 @@ import { SMS_PATH } from '@/core/delivery/state'
 
 export function NoticeDetail({ notificationId, compact }: { notificationId: string; compact?: boolean }) {
   const { profile } = useAuth()
-  const { data, isLoading, error } = useNotice(notificationId)
+  const { data, isPending: isLoading, error } = useNotice(notificationId)
   const markRead = useMarkRead(profile?.uid)
   const archive = useArchive(profile?.uid)
   const now = useNow(1000, !!data?.delivery && data.delivery.status === 'PUSHED')

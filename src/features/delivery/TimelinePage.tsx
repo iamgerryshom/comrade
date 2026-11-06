@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { ArrowLeft, CalendarClock, CheckCheck, CircleSlash, Clock, Eye, MessageSquareText, Search, Users, XCircle } from 'lucide-react'
 import { useNotificationDeliveries, useNotificationLive } from '@/hooks/data'
 import { countDeliveries } from '@/core/delivery/state'
@@ -25,7 +25,7 @@ function RecipientRow({ d, now, timeout }: { d: Delivery; now: number; timeout: 
   const waiting = (d.status === 'PUSHED' || d.status === 'PENDING') && remaining > 0
   const ackSecs = d.ackedAt ? (d.ackedAt.getTime() - d.createdAt.getTime()) / 1000 : null
   return (
-    <motion.li layout="position" className="flex items-center gap-3 border-b px-3 py-2.5 last:border-b-0 sm:px-4" data-testid={`recipient-${d.userId}`} data-status={d.status}>
+    <m.li layout="position" className="flex items-center gap-3 border-b px-3 py-2.5 last:border-b-0 sm:px-4" data-testid={`recipient-${d.userId}`} data-status={d.status}>
       <span className="flex size-9 shrink-0 items-center justify-center">
         {waiting ? (
           <CountdownRing remaining={remaining} total={timeout} />
@@ -53,14 +53,14 @@ function RecipientRow({ d, now, timeout }: { d: Delivery; now: number; timeout: 
         </p>
       </div>
       <StatusChip delivery={d} now={now} />
-    </motion.li>
+    </m.li>
   )
 }
 
 export function TimelinePage() {
   const { id } = useParams()
-  const { data: n, isLoading } = useNotificationLive(id)
-  const { data: deliveries, isLoading: loadingD } = useNotificationDeliveries(id)
+  const { data: n, isPending: isLoading } = useNotificationLive(id)
+  const { data: deliveries, isPending: loadingD } = useNotificationDeliveries(id)
   const [filter, setFilter] = useState<Filter>('all')
   const [q, setQ] = useState('')
   const [limit, setLimit] = useState(100)

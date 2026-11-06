@@ -14,4 +14,5 @@ export const idbPersister: Persister = {
 }
 
 /** Only cache what's useful offline and safe to keep on the device. */
-export const PERSISTED_KEYS = ['hierarchy', 'inbox', 'notice', 'myUnits', 'settings', 'sent']
+// (Not the hierarchy: it's large and rebuilt instantly from the data source / Firestore cache.)
+export const PERSISTED_KEYS = ['inbox', 'notice', 'myUnits', 'settings', 'sent']

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query'
-import { getServices, type Unsubscribe } from '@/services'
+import { getServices, servicesReady, type Unsubscribe } from '@/services'
 import type { AppSettings, AudienceRule, AuditLog, Delivery, Device, Notification, SmsMessage } from '@/types'
 import type { DraftInput, ProfileInput, SendNotificationInput, SettingsInput, UserInput, PositionInput } from '@/core/schemas'
 
@@ -36,7 +36,7 @@ export function useLive<T>(key: QueryKey, subscribe: ((cb: (v: T) => void) => Un
 }
 
 // ───────── Directory ─────────
-export const useHierarchy = () => useQuery({ queryKey: ['hierarchy'], queryFn: () => svc().directory.getHierarchy(), staleTime: Infinity })
+export const useHierarchy = () => useQuery({ queryKey: ['hierarchy'], queryFn: async () => (await servicesReady()).directory.getHierarchy(), staleTime: Infinity })
 
 export function useHierarchyIndex() {
   const { data } = useHierarchy()

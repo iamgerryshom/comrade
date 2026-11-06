@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Building2, GraduationCap, Library, Mail, PenSquare, Phone, ScrollText, Search, ShieldAlert, UserSearch } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { lookupStudentInput } from '@/core/schemas'
 import { useLookupStudent } from '@/hooks/data'
 import { useAuth } from '@/features/auth/AuthProvider'
@@ -51,7 +51,7 @@ export function LookupPage() {
         {lookup.error ? (
           <EmptyState icon={ShieldAlert} title="No result" description={(lookup.error as Error).message} />
         ) : r ? (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+          <m.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
             <Card>
               <div className="flex flex-col gap-4 border-b p-5 sm:flex-row sm:items-center">
                 <UserAvatar name={r.name} userType={r.userType} leader={r.positions.length > 0} className="size-14 text-base" />
@@ -91,7 +91,7 @@ export function LookupPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </m.div>
         ) : (
           <EmptyState icon={UserSearch} title="Search for a student" description="Results only include students inside your scope." />
         )}

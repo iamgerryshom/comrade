@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { getServices, type AuthUser } from '@/services'
+import { getServices, initServices, servicesReady, type AuthUser } from '@/services'
 import { can as canCore, isStudentLeader, type Action, type Principal } from '@/core/permissions'
 import type { HierarchyLookup } from '@/core/hierarchy'
 import type { Claims, Scope, User } from '@/types'
@@ -31,14 +31,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Auth state (Firebase-style listener)
   useEffect(() => {
-    const auth = getServices().auth
-    return auth.onAuthStateChanged((user) => {
+    let off: (() => void) | undefined
+    let alive = true
+    void servicesReady().then(({ auth }) => {
+      if (!alive) return
+      off = auth.onAuthStateChanged((user) => {
       if (!user) {
         setState({ status: 'signedOut', user: null, profile: null, claims: null })
         return
       }
       setState((s) => ({ ...s, user, status: s.profile?.uid === user.uid ? 'signedIn' : s.status }))
+      })
     })
+    return () => {
+      alive = false
+      off?.()
+    }
   }, [])
 
   // Own profile document + custom claims (refreshed when the profile changes, like a token refresh)
@@ -61,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [uid])
 
   const signIn = useCallback(async (identifier: string, password: string) => {
-    await getServices().auth.signIn(identifier, password)
+    await (await initServices()).auth.signIn(identifier, password)
   }, [])
 
   const signOut = useCallback(async () => {

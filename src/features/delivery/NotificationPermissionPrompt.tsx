@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { BellRing, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,7 @@ export function NotificationPermissionPrompt() {
 
   return (
     <AnimatePresence>
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+      <m.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary-soft/60 p-4 sm:flex-row sm:items-center">
           <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground" aria-hidden>
             <BellRing className="size-5" />
@@ -48,7 +48,7 @@ export function NotificationPermissionPrompt() {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   )
 }

@@ -3,7 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ArrowLeft, Briefcase, Crown, GraduationCap, KeyRound, ShieldCheck, Star, UserRound, WifiOff, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, FieldError, Input, Label } from '@/components/ui/primitives'
@@ -77,7 +77,7 @@ export function LoginPage() {
         </Button>
       </div>
       <div className="mx-auto grid grid-cols-1 max-w-6xl gap-6 px-4 pb-12 pt-2 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-10 lg:pt-8">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <m.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">Sign in to Comrade</CardTitle>
@@ -107,10 +107,10 @@ export function LoginPage() {
               </form>
             </CardContent>
           </Card>
-        </motion.div>
+        </m.div>
 
         {env.demoMode && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+          <m.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
             <Card className="border-gold/40">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export function LoginPage() {
                 </ul>
               </CardContent>
             </Card>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { BatteryFull, ChevronLeft, MessageSquareText, Signal, Smartphone, Wifi } from 'lucide-react'
 import { format } from 'date-fns'
 import { useSmsInbox } from '@/hooks/data'
@@ -12,7 +12,7 @@ import type { SmsMessage } from '@/types'
 
 /** Demo only: a fake phone showing the SMS each demo number "received", live. */
 export function MockSmsInboxPage() {
-  const { data, isLoading } = useSmsInbox(true)
+  const { data, isPending: isLoading } = useSmsInbox(true)
   const phones = useMemo(() => {
     const m = new Map<string, SmsMessage[]>()
     for (const s of data ?? []) m.set(s.to, [...(m.get(s.to) ?? []), s])
@@ -49,7 +49,7 @@ export function MockSmsInboxPage() {
                   <span className="min-w-0 flex-1">
                     <span className="block font-mono text-xs">{p}</span>
                     <span className="block truncate text-xs text-muted-foreground">
-                      {ms.some((m) => m.userId && demoNames.has(m.userId)) ? '★ demo account · ' : ''}
+                      {ms.some((x) => x.userId && demoNames.has(x.userId)) ? '★ demo account · ' : ''}
                       {timeAgo(ms[0].createdAt)}
                     </span>
                   </span>
@@ -83,15 +83,15 @@ export function MockSmsInboxPage() {
                 <EmptyState icon={MessageSquareText} title="No SMS yet" description="Send a notice to a student who is 'offline' and wait for the timeout." />
               ) : (
                 <AnimatePresence initial={false}>
-                  {messages.map((m) => (
-                    <motion.div key={m.id} initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="max-w-[88%]">
+                  {messages.map((msg) => (
+                    <m.div key={msg.id} initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="max-w-[88%]">
                       <p className="rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-[13px] leading-snug" data-testid="sms-bubble">
-                        {m.text}
+                        {msg.text}
                       </p>
                       <p className="mt-0.5 px-1 text-[10px] text-muted-foreground">
-                        {format(m.createdAt, 'd MMM HH:mm')} · {m.status === 'FAILED' ? 'not delivered' : m.status.toLowerCase()}
+                        {format(msg.createdAt, 'd MMM HH:mm')} · {msg.status === 'FAILED' ? 'not delivered' : msg.status.toLowerCase()}
                       </p>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </AnimatePresence>
               )}

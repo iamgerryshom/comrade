@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   AlertTriangle,
   ArrowRight,
@@ -34,7 +34,7 @@ function greeting() {
 
 function LatestNotices() {
   const { profile } = useAuth()
-  const { data, isLoading } = useInbox(profile?.uid)
+  const { data, isPending: isLoading } = useInbox(profile?.uid)
   const latest = (data ?? []).filter((d) => !d.archivedAt).slice(0, 5)
   return (
     <Card>
@@ -75,7 +75,7 @@ function LatestNotices() {
 
 function MyUnitsCard() {
   const { profile } = useAuth()
-  const { data, isLoading } = useMyUnits(profile?.uid)
+  const { data, isPending: isLoading } = useMyUnits(profile?.uid)
   const isLecturer = profile?.role === 'LECTURER'
   return (
     <Card>
@@ -110,7 +110,7 @@ function MyUnitsCard() {
 
 function RecentSends() {
   const { profile } = useAuth()
-  const { data, isLoading } = useSent(profile?.uid)
+  const { data, isPending: isLoading } = useSent(profile?.uid)
   const recent = (data ?? []).slice(0, 4)
   return (
     <Card>
@@ -172,7 +172,7 @@ function AnalyticsSummary() {
 function LeaderGroupCard() {
   const { claims } = useAuth()
   const scope = claims?.scopes[0] ?? null
-  const { data, isLoading } = useNodeDetails(scope)
+  const { data, isPending: isLoading } = useNodeDetails(scope)
   const { data: quota } = useSendQuota(claims ? 'me' : undefined)
   return (
     <Card className="border-gold/40 bg-gradient-to-br from-gold-soft/60 to-card">
@@ -252,7 +252,7 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <m.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{greeting()},</p>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{firstName}</h1>
@@ -269,7 +269,7 @@ export function HomePage() {
             </Link>
           </Button>
         )}
-      </motion.div>
+      </m.div>
 
       {profile.userType === 'STUDENT' && !profile.phone && (
         <Card className="flex items-start gap-3 border-amber-500/40 bg-amber-500/10 p-4 text-sm">

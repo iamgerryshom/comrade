@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { Archive, CheckCheck, Inbox, MailOpen, Search, X } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useHierarchyIndex, useInbox, useMarkRead } from '@/hooks/data'
@@ -18,7 +18,7 @@ const PAGE = 20
 function InboxRow({ d, active, onOpen }: { d: Delivery; active: boolean; onOpen: () => void }) {
   const unread = !d.readAt
   return (
-    <motion.li layout initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+    <m.li layout initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
       <button
         type="button"
         onClick={onOpen}
@@ -42,13 +42,13 @@ function InboxRow({ d, active, onOpen }: { d: Delivery; active: boolean; onOpen:
           </div>
         </div>
       </button>
-    </motion.li>
+    </m.li>
   )
 }
 
 export function InboxPage() {
   const { profile } = useAuth()
-  const { data, isLoading } = useInbox(profile?.uid)
+  const { data, isPending: isLoading } = useInbox(profile?.uid)
   const h = useHierarchyIndex()
   const markRead = useMarkRead(profile?.uid)
   const tabletUp = useIsTabletUp()

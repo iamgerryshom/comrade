@@ -8,7 +8,7 @@ import { LEVEL_LABEL } from '@/core/labels'
 
 export function MyUnitsPage() {
   const { profile } = useAuth()
-  const { data, isLoading } = useMyUnits(profile?.uid)
+  const { data, isPending: isLoading } = useMyUnits(profile?.uid)
   const { data: inbox } = useInbox(profile?.uid)
   const h = useHierarchyIndex()
   if (isLoading || !data) return <PageSkeleton />

@@ -1,5 +1,5 @@
 import { Link, Navigate } from 'react-router'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ArrowRight, BellRing, CheckCheck, Layers, MessageSquareText, ShieldCheck, Smartphone, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/layout/Logo'
@@ -27,7 +27,7 @@ export function WelcomePage() {
       <main>
         <section className="relative mx-auto grid grid-cols-1 max-w-6xl items-center gap-10 px-4 pb-16 pt-6 sm:px-6 lg:grid-cols-2 lg:pt-16">
           <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+          <m.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold-soft px-3 py-1 text-xs font-medium text-gold-foreground dark:text-gold">
               <span className="size-1.5 rounded-full bg-gold" /> For Kisii University students & staff
             </p>
@@ -47,9 +47,9 @@ export function WelcomePage() {
                 <a href="#how">How it works</a>
               </Button>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mx-auto w-full max-w-sm" aria-hidden>
+          <m.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mx-auto w-full max-w-sm" aria-hidden>
             <div className="space-y-3 rounded-2xl border bg-card p-4 shadow-soft">
               <div className="flex items-start gap-3 rounded-xl border bg-background p-3">
                 <span className="inline-flex size-9 items-center justify-center rounded-lg bg-orange-500/10 text-orange-600">
@@ -73,19 +73,19 @@ export function WelcomePage() {
                 [COMRADE-KSU] EXAM: COMP 210 CAT moved to Fri 14 Nov, 10am, LH3. From: Lecturer COMP210. Ref:K7Q2
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </section>
 
         <section id="how" className="border-t bg-card/50">
           <div className="mx-auto grid grid-cols-1 max-w-6xl gap-4 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
             {FEATURES.map((f, i) => (
-              <motion.div key={f.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="rounded-xl border bg-card p-5 shadow-soft">
+              <m.div key={f.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="rounded-xl border bg-card p-5 shadow-soft">
                 <span className="mb-3 inline-flex size-10 items-center justify-center rounded-xl bg-primary-soft text-primary" aria-hidden>
                   <f.icon className="size-5" />
                 </span>
                 <h2 className="font-semibold">{f.title}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{f.body}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </section>

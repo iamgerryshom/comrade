@@ -38,7 +38,7 @@ function ChartTooltip({ active, payload, label, labelFormat }: { active?: boolea
 
 export function AnalyticsPage() {
   const { can } = useAuth()
-  const { data, isLoading } = useAnalytics(can('analytics.view'))
+  const { data, isPending: isLoading } = useAnalytics(can('analytics.view'))
   const { resolved } = useTheme()
   const [tableView, setTableView] = useState(false)
   if (isLoading || !data) return <PageSkeleton />

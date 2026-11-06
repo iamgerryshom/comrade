@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { BookOpen, Building2, ChevronRight, GraduationCap, Layers, Library, Lock, School as SchoolIcon, Users, UserRound, Phone } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useHierarchyIndex, useNodeDetails } from '@/hooks/data'
 import { useIsDesktop } from '@/hooks/useMediaQuery'
@@ -21,7 +21,7 @@ interface TreeNode {
 }
 
 function NodeDetailsPanel({ scope }: { scope: Scope }) {
-  const { data, isLoading, error } = useNodeDetails(scope)
+  const { data, isPending: isLoading, error } = useNodeDetails(scope)
   const [q, setQ] = useState('')
   if (isLoading) return <PageSkeleton />
   if (error || !data) return <EmptyState icon={Lock} title="Outside your scope" description={(error as Error)?.message} />
@@ -199,9 +199,9 @@ export function ExplorerPage() {
         {isDesktop ? (
           <Card className="min-w-0 p-5">
             <AnimatePresence mode="wait">
-              <motion.div key={selected ? scopeKey(selected) : 'none'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <m.div key={selected ? scopeKey(selected) : 'none'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {selected ? <NodeDetailsPanel scope={selected} /> : <EmptyState icon={Layers} title="Select a node" description="Pick a school, department, course or unit to see its numbers and members." />}
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </Card>
         ) : (
