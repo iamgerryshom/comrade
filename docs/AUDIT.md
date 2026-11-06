@@ -75,14 +75,16 @@ Everything below is missing. ✅ means it's already there.
 - [ ] User and role management, leadership positions, analytics, SMS logs, audit log, settings, profile and preferences
 - [ ] Demo panel (`VITE_DEMO_MODE`)
 
-**App experience**
-- [ ] PWA (vite-plugin-pwa, manifest, maskable icons, install banner, offline cache, sync queue)
-- [ ] Gestures, transitions, onboarding, PIN/biometric unlock, data saver, deep links
-- [ ] Capacitor Android project + push code + `android:sync` / `android:open` scripts
+**Responsive website and browser features** (spec revised: website only, so no PWA install, manifest, Capacitor or APK)
+- [ ] Mobile-first responsive layout: phone (<640, top bar + bottom nav), tablet (640–1024, two-column inbox), desktop (>1024, collapsible sidebar). No horizontal scrolling
+- [ ] Tables become card lists on phones; pop-ups become full-width sheets; 44px+ tap targets
+- [ ] Service worker for **web push only** (simulated in mock mode): background ACK + browser notification; tapping it opens `/notice/{id}`
+- [ ] Polite notification-permission prompt after login; offline banner with an SMS reminder
+- [ ] Performance: lazy-loaded routes and images, small bundles (Lighthouse mobile perf and a11y 90+)
 
 **Quality and docs**
 - [ ] Vitest (permissions, audience, delivery engine, mock callable rejection)
-- [ ] Playwright (360×800 + desktop; the lecturer → 2 students end-to-end flow)
+- [ ] Playwright at 360×800, 768×1024 and 1440×900 (the lecturer → 2 students end-to-end flow)
 - [ ] `firebase/firestore.rules`, `firebase/firestore.indexes.json` (drafts)
 - [ ] README (architecture, permissions matrix, delivery diagram, Firestore structure, Phase 9, assumptions, data sources)
 
@@ -109,20 +111,21 @@ The stack decision is to **keep Vite 8 + React 19** and add everything in Sectio
 | Phase | Deliverable | Commit |
 |---|---|---|
 | 0 Research | Fetch official kisiiuniversity.ac.ke pages → `kisii-structure.json`, summary table and gaps for your review | `data: Kisii University structure` |
-| 1 Foundation | TS strict, Tailwind v4 + shadcn, theme, app shell; types, service interfaces, mock store (BroadcastChannel + Web Locks), seeded generator; Firebase SDK + inactive `lib/firebase.ts`; Vitest set up | `feat: foundation` |
+| 1 Foundation | TS strict, Tailwind v4 + shadcn, theme, responsive layout (phone/tablet/desktop); types, service interfaces, mock store (BroadcastChannel + Web Locks), seeded generator; Firebase SDK + inactive `lib/firebase.ts`; Vitest set up | `feat: foundation` |
 | 2 Auth & roles | Mock auth, login + demo accounts, `core/permissions.ts` + tests, route guards, 403 | `feat: auth and permissions` |
 | 3 Hierarchy | Explorer, My units, scoped and audited student lookup | `feat: hierarchy` |
 | 4 Notifications | Compose / audience builder / SMS preview, inbox, detail, real-time | `feat: notifications` |
 | 5 Delivery engine | `core/delivery` + tests, ACK, worker, MockSms, SMS inbox, simulate-offline, timeline | `feat: delivery engine` |
 | 6 Admin & analytics | Users and roles, positions, analytics, SMS logs, audit, settings | `feat: admin and analytics` |
-| 7 App experience | PWA, offline + sync queue, gestures, onboarding, PIN, Capacitor Android | `feat: app experience` |
+| 7 Responsive & browser | Check every screen at 3 sizes, push service worker with background ACK, permission prompt, offline banner, performance pass | `feat: responsive and browser features` |
 | 8 Polish | Welcome, accessibility, Playwright, rules and indexes drafts, final README | `chore: polish and docs` |
 | 9 Firebase | **Not started until you say so** | — |
 
 After each phase I'll run lint, the type check, tests and the build, then give you a short summary.
 
 ### Risks and notes
-- **Vite 8 / React 19 are very new.** Some plugins (`vite-plugin-pwa`, shadcn's generator) may declare older peer ranges. I'll install with matching versions. If a plugin truly isn't compatible, I'll tell you before changing anything (for example, pinning Vite 7).
-- **Android APK build** needs Android Studio / JDK 17+ and the Android SDK on this machine. I'll check for them in Phase 7. If they're missing, I'll set up the Capacitor project and scripts and document the steps, but I can't produce the APK myself.
+- **Vite 8 / React 19 are very new.** Some tools (e.g. shadcn's generator) may declare older peer ranges. I'll install with matching versions. If a tool truly isn't compatible, I'll tell you before changing anything (for example, pinning Vite 7).
+- **The push service worker is hand-written** (`public/sw.js`, no `vite-plugin-pwa`), because the spec rules out an installable PWA. It handles push and notification clicks only, with no offline caching of the site.
+- **"Simulated push" in mock mode**: the open tabs get the notice via BroadcastChannel, and the service worker shows the browser notification. A truly closed browser can't receive anything until real FCM web push exists (Phase 9). In the demo, "offline" means the "Simulate offline" toggle (or no open tab), which then triggers the SMS fallback.
 - **Kisii University website**: if pages are unreachable or incomplete, entries will be marked `"verified": false` and listed as gaps.
 - **`../../backend/`** is empty and will not be used (Firebase only).
