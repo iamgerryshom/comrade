@@ -1,5 +1,9 @@
 # Comrade — Audit of the existing project (Phase −1)
 
+> **Status (2026-11-06):** Phases 0–8 have been carried out on top of this project. The existing
+> files were kept and extended in place (no restructuring, nothing deleted). See the README for the
+> result. The plan below is kept as the historical audit.
+
 _Date: 2026-11-06 · Auditor: Claude Code_
 
 ## 1. What exists today

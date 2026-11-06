@@ -107,6 +107,42 @@ describe('mock callable functions enforce auth + permissions', () => {
   })
 })
 
+describe('scheduled notices and drafts', () => {
+  beforeEach(() => {
+    setFakeDelay(0)
+    store.load(clone())
+    as('u_lecturer')
+  })
+
+  it('a scheduled notice creates no deliveries until its time, then fans out once', async () => {
+    const when = new Date(Date.now() + 60_000)
+    const { notificationId, scheduled } = await fn.sendNotification({ ...msg, scheduledFor: when, audience: { targetType: 'UNIT', targetId: comp210.id } })
+    expect(scheduled).toBe(true)
+    const count = () => store.list('deliveries', (d) => d.notificationId === notificationId).length
+    expect(count()).toBe(0)
+    await workerTick(new Date(when.getTime() - 1000))
+    expect(count()).toBe(0)
+    await Promise.all([workerTick(new Date(when.getTime() + 1000)), workerTick(new Date(when.getTime() + 1000))])
+    const n = count()
+    expect(n).toBeGreaterThan(5)
+    await workerTick(new Date(when.getTime() + 3000))
+    expect(count()).toBe(n)
+    expect(store.get('notifications', notificationId)!.status).toBe('SENT')
+  })
+
+  it('drafts are private to their author and become the sent notice', async () => {
+    const { mockNotifications } = await import('./services')
+    const id = await mockNotifications.saveDraft({ title: 'Half-written', body: 'todo' })
+    expect((await mockNotifications.listDrafts()).map((d) => d.id)).toContain(id)
+    as('u_hod_computing')
+    await expect(mockNotifications.deleteDraft(id)).rejects.toMatchObject({ code: 'permission-denied' })
+    as('u_lecturer')
+    const res = await fn.sendNotification({ ...msg, draftId: id, audience: { targetType: 'UNIT', targetId: comp210.id } })
+    expect(res.notificationId).toBe(id)
+    expect(store.get('notifications', id)!.status).toBe('SENT')
+  })
+})
+
 describe('mock auth', () => {
   beforeEach(() => {
     setFakeDelay(0)
