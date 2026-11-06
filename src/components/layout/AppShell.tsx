@@ -3,7 +3,6 @@ import { Link, NavLink, Outlet, useLocation, useNavigate, useNavigationType } fr
 import { AnimatePresence, m } from 'framer-motion'
 import {
   ArrowLeft,
-  LayoutGrid,
   Bell,
   Download,
   ChevronsLeft,
@@ -15,11 +14,11 @@ import {
   Search,
   Sun,
   User as UserIcon,
+  Wifi,
   WifiOff,
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { canSendAtAll } from '@/core/permissions'
-import { POSITION_LABEL, ROLE_LABEL } from '@/core/labels'
 import { useInbox } from '@/hooks/data'
 import { useIsOnline, useSimulatedOffline } from '@/hooks/useOnline'
 import { useTheme } from '@/hooks/useTheme'
@@ -113,7 +112,6 @@ function NavList({ items, collapsed, onNavigate }: { items: NavItem[]; collapsed
 
 function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (v: boolean) => void }) {
   const items = useNavItems()
-  const { profile, claims } = useAuth()
   return (
     <aside className={cn('fixed inset-y-0 left-0 z-30 hidden flex-col border-r bg-sidebar transition-[width] duration-200 lg:flex', collapsed ? 'w-[72px]' : 'w-64')}>
       <div className={cn('flex h-16 items-center gap-2 px-4', collapsed && 'justify-center px-0')}>
@@ -121,60 +119,49 @@ function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed
           <Logo compact={collapsed} />
         </Link>
       </div>
-      <div className={cn('min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-2', collapsed && 'px-2')}>
+      <div className={cn('min-h-0 flex-1 overflow-y-auto px-3 pb-4', collapsed && 'px-2')}>
         <NavList items={items} collapsed={collapsed} />
       </div>
-      <div className={cn('flex items-center gap-2 border-t p-3', collapsed && 'flex-col')}>
-        {profile && claims && (
-          <Link to="/profile" className={cn('flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1.5 hover:bg-accent', collapsed && 'flex-none')} aria-label="Your profile">
-            <UserAvatar name={profile.name} userType={profile.userType} leader={claims.positions.length > 0} className="size-8" />
-            {!collapsed && (
-              <span className="min-w-0 leading-tight">
-                <span className="block truncate text-sm font-medium">{profile.name}</span>
-                <span className="block truncate text-xs text-muted-foreground">
-                  {claims.positions.length ? POSITION_LABEL[claims.positions[0]] : ROLE_LABEL[profile.role]}
-                </span>
-              </span>
-            )}
-          </Link>
-        )}
-        <Button variant="ghost" size="icon-sm" className="shrink-0 text-muted-foreground" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+      <div className="border-t p-3">
+        <Button variant="ghost" size="sm" className={cn('w-full justify-start text-muted-foreground', collapsed && 'justify-center')} onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
           {collapsed ? <ChevronsRight /> : <ChevronsLeft />}
+          {!collapsed && 'Collapse'}
         </Button>
       </div>
     </aside>
   )
 }
 
-/** The 3 most-used destinations for this user; everything else lives under "More". */
-function usePrimaryTabs() {
+function BottomNav() {
   const { claims, can } = useAuth()
+  const unread = useUnread()
   const sender = !!claims && canSendAtAll(claims)
   const isStudent = claims?.userType === 'STUDENT'
-  const third = sender ? '/compose' : isStudent ? '/units' : can('directory.view') ? '/explorer' : '/profile'
-  return ['/home', '/inbox', third]
-}
-
-function BottomNav({ onMore, moreOpen }: { onMore: () => void; moreOpen: boolean }) {
-  const unread = useUnread()
-  const tabs = usePrimaryTabs()
-  const { pathname } = useLocation()
-  const items = tabs.map((to) => NAV.find((n) => n.to === to)!).filter(Boolean)
-  const inMore = !tabs.some((t) => pathname === t || pathname.startsWith(t + '/')) && !DETAIL_ROUTES.some(([re]) => re.test(pathname))
-  const tabClass = (active: boolean) =>
-    cn('relative flex h-16 w-full select-none flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground transition-colors', active && 'text-primary')
+  const items = NAV.filter((n) =>
+    ['/home', '/inbox', '/profile'].includes(n.to) ||
+    (n.to === '/compose' && sender) ||
+    (n.to === '/units' && isStudent && !sender) ||
+    (n.to === '/explorer' && !sender && !isStudent && can('directory.view')),
+  )
+  const order = ['/home', '/inbox', '/units', '/compose', '/explorer', '/profile']
+  items.sort((a, b) => order.indexOf(a.to) - order.indexOf(b.to))
   return (
-    <nav aria-label="Bottom" className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/90 backdrop-blur-lg safe-bottom sm:hidden">
-      <ul className="grid grid-cols-4">
+    <nav aria-label="Bottom" className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/95 backdrop-blur safe-bottom sm:hidden">
+      <ul className="grid" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
         {items.map((item) => (
           <li key={item.to}>
-            <NavLink to={item.to} onClick={() => haptic()} className={({ isActive }) => tabClass(isActive)}>
+            <NavLink
+              to={item.to}
+              onClick={() => haptic()}
+              className={({ isActive }) => cn('relative flex h-16 select-none flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted-foreground', isActive && 'text-primary')}
+            >
               {({ isActive }) => (
                 <>
-                  <span className={cn('relative flex h-8 w-14 items-center justify-center rounded-full transition-colors', isActive && 'bg-primary-soft')}>
-                    <item.icon className="size-[21px]" aria-hidden />
+                  {isActive && <m.span layoutId="bottom-active" className="absolute top-0 h-0.5 w-10 rounded-full bg-primary" />}
+                  <span className="relative">
+                    <item.icon className="size-[22px]" aria-hidden />
                     {item.to === '/inbox' && unread > 0 && (
-                      <span className="absolute -top-1 right-1.5 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-4 text-primary-foreground">{unread > 99 ? '99+' : unread}</span>
+                      <span className="absolute -right-2.5 -top-1.5 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-4 text-primary-foreground">{unread > 99 ? '99+' : unread}</span>
                     )}
                   </span>
                   {item.label === 'My units' ? 'Units' : item.label}
@@ -183,66 +170,8 @@ function BottomNav({ onMore, moreOpen }: { onMore: () => void; moreOpen: boolean
             </NavLink>
           </li>
         ))}
-        <li>
-          <button type="button" onClick={() => { haptic(); onMore() }} className={tabClass(inMore || moreOpen)} aria-haspopup="dialog" aria-expanded={moreOpen}>
-            <span className={cn('flex h-8 w-14 items-center justify-center rounded-full transition-colors', (inMore || moreOpen) && 'bg-primary-soft')}>
-              <LayoutGrid className="size-[21px]" aria-hidden />
-            </span>
-            More
-          </button>
-        </li>
       </ul>
     </nav>
-  )
-}
-
-/** Phone "More" sheet: every other destination as a tidy grid, plus account actions. */
-function MoreSheet({ open, setOpen }: { open: boolean; setOpen: (o: boolean) => void }) {
-  const items = useNavItems()
-  const tabs = usePrimaryTabs()
-  const navigate = useNavigate()
-  const { profile, claims, signOut } = useAuth()
-  const { resolved, setTheme } = useTheme()
-  const rest = items.filter((i) => !tabs.includes(i.to))
-  const go = (to: string) => {
-    setOpen(false)
-    navigate(to)
-  }
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent title="More" hideClose>
-        {profile && claims && (
-          <button type="button" onClick={() => go('/profile')} className="mb-4 flex w-full items-center gap-3 rounded-2xl border bg-card p-3 text-left">
-            <UserAvatar name={profile.name} userType={profile.userType} leader={claims.positions.length > 0} className="size-10" />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate font-medium">{profile.name}</span>
-              <span className="block truncate text-xs text-muted-foreground">{profile.admissionNumber ?? profile.title ?? profile.email}</span>
-            </span>
-            <RoleBadge role={profile.role} userType={profile.userType} positions={claims.positions} />
-          </button>
-        )}
-        <div className="grid grid-cols-3 gap-2">
-          {rest
-            .filter((i) => i.to !== '/profile')
-            .map((i) => (
-              <button key={i.to} type="button" onClick={() => go(i.to)} className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-2xl border bg-card p-2 text-center text-xs font-medium hover:bg-accent">
-                <span className="inline-flex size-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                  <i.icon className="size-[18px]" aria-hidden />
-                </span>
-                <span className="leading-tight">{i.label}</span>
-              </button>
-            ))}
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button variant="outline" className="h-11" onClick={() => setTheme(resolved === 'dark' ? 'light' : 'dark')}>
-            {resolved === 'dark' ? <Sun /> : <Moon />} {resolved === 'dark' ? 'Light mode' : 'Dark mode'}
-          </Button>
-          <Button variant="outline" className="h-11 text-destructive hover:text-destructive" onClick={() => void signOut().then(() => go('/login'))}>
-            <LogOut /> Sign out
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
   )
 }
 
@@ -281,35 +210,39 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
     else navigate(detail?.parent ?? '/home')
   }
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur-lg safe-top">
+    <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur safe-top">
       <div className="flex h-14 items-center gap-1 px-2 sm:h-16 sm:gap-2 sm:px-4 lg:px-6">
-      {/* Phones: back + title on detail screens, else the logo */}
       {detail ? (
-        <div className="flex min-w-0 items-center gap-1 sm:hidden">
-          <Button variant="ghost" size="icon" onClick={goBack} aria-label="Back">
+        <>
+          <Button variant="ghost" size="icon" className="sm:hidden" onClick={goBack} aria-label="Back">
             <ArrowLeft className="size-5" />
           </Button>
-          <p className="truncate text-base font-semibold">{detail.title}</p>
-        </div>
+          <p className="truncate text-base font-semibold sm:hidden">{detail.title}</p>
+        </>
       ) : (
-        <Link to="/home" className="pl-2 sm:hidden" aria-label="Comrade home">
-          <Logo />
-        </Link>
+        <>
+          <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open menu">
+            <Menu className="size-5" />
+          </Button>
+          <Link to="/home" className="lg:hidden" aria-label="Comrade home">
+            <Logo compact className="sm:hidden" />
+            <Logo className="hidden sm:flex" />
+          </Link>
+        </>
       )}
-      {/* Tablets: menu + logo (no sidebar, no bottom nav) */}
-      <div className="hidden items-center gap-1 sm:flex lg:hidden">
-        <Button variant="ghost" size="icon" onClick={onMenu} aria-label="Open menu">
+      <span className={cn('hidden', detail && 'sm:contents')}>
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open menu">
           <Menu className="size-5" />
         </Button>
-        <Link to="/home" aria-label="Comrade home">
+        <Link to="/home" className="lg:hidden" aria-label="Comrade home">
           <Logo />
         </Link>
-      </div>
+      </span>
 
       <button
         type="button"
         onClick={onSearch}
-        className="ml-2 hidden h-10 w-full max-w-sm items-center gap-2 rounded-xl border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-accent md:flex"
+        className="ml-2 hidden h-10 w-full max-w-sm items-center gap-2 rounded-lg border bg-card px-3 text-sm text-muted-foreground shadow-xs hover:bg-accent md:flex"
       >
         <Search className="size-4" aria-hidden />
         <span>Search notices, pages…</span>
@@ -329,17 +262,17 @@ function TopBar({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
           </label>
         )}
 
-        {!online && (
-          <span role="status" className="inline-flex h-7 items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 text-xs font-medium text-amber-800 dark:text-amber-300">
-            <WifiOff className="size-3.5" aria-hidden /> {simulated ? 'Offline (demo)' : 'Offline'}
+        <Tooltip content={online ? 'Online' : simulated ? 'Offline (simulated)' : 'Offline'}>
+          <span className={cn('inline-flex size-9 items-center justify-center rounded-lg', online ? 'text-green-600 dark:text-green-400' : 'text-amber-600')} role="status" aria-label={online ? 'Online' : 'Offline'}>
+            {online ? <Wifi className="size-[18px]" /> : <WifiOff className="size-[18px]" />}
           </span>
-        )}
+        </Tooltip>
 
         <Button variant="ghost" size="icon" onClick={() => setTheme(resolved === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode" className="hidden sm:inline-flex">
           {resolved === 'dark' ? <Sun className="size-5" /> : <Moon className="size-5" />}
         </Button>
 
-        <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex" onClick={() => navigate('/inbox')} aria-label={`Inbox, ${unread} unread`}>
+        <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/inbox')} aria-label={`Inbox, ${unread} unread`}>
           <Bell className="size-5" />
           {unread > 0 && <span className="absolute right-1.5 top-1.5 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-4 text-primary-foreground">{unread > 99 ? '99+' : unread}</span>}
         </Button>
@@ -417,7 +350,6 @@ export function AppShell() {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('comrade.sidebar') === 'collapsed')
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [moreOpen, setMoreOpen] = useState(false)
   const items = useNavItems()
   const location = useLocation()
   const navType = useNavigationType()
@@ -450,8 +382,7 @@ export function AppShell() {
           </ErrorBoundary>
         </main>
       </div>
-      <BottomNav onMore={() => setMoreOpen(true)} moreOpen={moreOpen} />
-      <MoreSheet open={moreOpen} setOpen={setMoreOpen} />
+      <BottomNav />
 
       <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
         <DialogContent title="Menu" side="left" className="bg-sidebar">

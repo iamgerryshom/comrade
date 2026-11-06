@@ -38,9 +38,5 @@ export default defineConfig([
       'react-hooks/incompatible-library': 'off',
     },
   },
-  {
-    files: ['*.config.{js,ts}'],
-    languageOptions: { globals: globals.node },
-  },
   prettier,
 ])
