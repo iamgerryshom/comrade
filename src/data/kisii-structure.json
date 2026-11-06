@@ -1,0 +1,377 @@
+{
+  "institution": "Kisii University",
+  "retrievedAt": "2026-11-06",
+  "notes": [
+    "Collected through web search over official kisiiuniversity.ac.ke pages. Direct fetches of www.kisiiuniversity.ac.ke were refused (ECONNREFUSED) on 2026-11-06.",
+    "School and department names come from each school's official academics page or kisiiuniversity.ac.ke/schools_departments.",
+    "Programme names come from official programme listings. Where the official page did not state which department a programme belongs to, the assignment was made by subject and the course has \"departmentInferred\": true.",
+    "Course codes are invented short abbreviations: the official site does not publish them in a usable form.",
+    "The School of Health Sciences lists about 20 departments, most of them clinical specialties without their own programmes. Only the departments that offer programmes are included."
+  ],
+  "schools": [
+    {
+      "name": "School of Information Science & Technology",
+      "code": "SIST",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-information-technology/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Computing Science",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Computer Science", "code": "BSCS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Software Engineering", "code": "BSSE", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Information Technology", "code": "BSIT", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Applied Computer Science", "code": "BSACS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Diploma in Computer Science", "code": "DCS", "level": "DIPLOMA", "durationYears": 2, "verified": true },
+            { "name": "Diploma in Information Technology", "code": "DIT", "level": "DIPLOMA", "durationYears": 2, "verified": true },
+            { "name": "Certificate in Information Technology", "code": "CIT", "level": "CERTIFICATE", "durationYears": 1, "verified": true },
+            { "name": "Master of Science in Information Systems", "code": "MSIS", "level": "MASTERS", "durationYears": 2, "verified": true, "departmentInferred": true },
+            { "name": "Doctor of Philosophy in Information Systems", "code": "PHDIS", "level": "PHD", "durationYears": 3, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Communication, Media and Information Science",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts in Communication and Media", "code": "BACM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Information Science", "code": "BIS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Diploma in Journalism and Mass Communication", "code": "DJMC", "level": "DIPLOMA", "durationYears": 2, "verified": true },
+            { "name": "Diploma in Library and Information Science", "code": "DLIS", "level": "DIPLOMA", "durationYears": 2, "verified": true },
+            { "name": "Certificate in Library and Information Science", "code": "CLIS", "level": "CERTIFICATE", "durationYears": 1, "verified": true },
+            { "name": "Certificate in Journalism and Mass Communication", "code": "CJMC", "level": "CERTIFICATE", "durationYears": 1, "verified": true },
+            { "name": "Master of Arts in Communication Studies", "code": "MACS", "level": "MASTERS", "durationYears": 2, "verified": true },
+            { "name": "Master of Information Science", "code": "MIS", "level": "MASTERS", "durationYears": 2, "verified": true },
+            { "name": "Doctor of Philosophy in Media and Communication", "code": "PHDMC", "level": "PHD", "durationYears": 3, "verified": true },
+            { "name": "Doctor of Philosophy in Information Science", "code": "PHDIF", "level": "PHD", "durationYears": 3, "verified": true }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Business and Economics",
+      "code": "SOBE",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-business-and-economics/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Accounting and Finance",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Commerce", "code": "BCOM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Economics and Statistics", "code": "BES", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Master of Science in Finance and Investments", "code": "MSFI", "level": "MASTERS", "durationYears": 2, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Business Administration",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Business and Management", "code": "BBM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Business Information Management", "code": "BBIM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Secretarial Management and Administration", "code": "BSMA", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Master of Business Administration", "code": "MBA", "level": "MASTERS", "durationYears": 2, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Management Science",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Purchasing and Supplies Management", "code": "BPSM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Project Management, Monitoring and Evaluation", "code": "BPME", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Human Resource and Strategic Management",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Human Resource Management", "code": "BHRM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Tourism and Hospitality Management",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Tourism and Hospitality Management", "code": "BTHM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Pure and Applied Sciences",
+      "code": "SPAS",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-pure-and-applied-science/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Mathematics and Actuarial Sciences",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Actuarial Science", "code": "BAS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science (Mathematics and Computing)", "code": "BSMC", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Applied Statistics", "code": "BSAS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science (Biometry and Informatics)", "code": "BSBI", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Mathematics", "code": "BSM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Biological Sciences",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Biochemistry", "code": "BSBC", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Microbiology", "code": "BSMB", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Biotechnology", "code": "BSBT", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Cellular and Molecular Biology", "code": "BSCMB", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Chemistry",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Industrial Chemistry", "code": "BSIC", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Analytical Chemistry", "code": "BSAC", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Petroleum Chemistry", "code": "BSPC", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Physics",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Physics", "code": "BSP", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Renewable Energy", "code": "BSRE", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Geophysics and Mineralogy", "code": "BSGM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Health Sciences",
+      "code": "SHS",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-health-sciences/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Nursing",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Nursing (Direct Entry)", "code": "BSN", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Nursing (Upgrading)", "code": "BSNU", "level": "UNDERGRADUATE", "durationYears": 2, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Clinical Medicine",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Clinical Medicine and Community Health", "code": "BSCM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Diploma in Clinical Medicine and Community Health", "code": "DCM", "level": "DIPLOMA", "durationYears": 3, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Public Health",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Public Health", "code": "BSPH", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Science in Community Health and Development", "code": "BSCHD", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Diploma in Community Health and Development", "code": "DCHD", "level": "DIPLOMA", "durationYears": 2, "verified": true, "departmentInferred": true },
+            { "name": "Master of Public Health", "code": "MPH", "level": "MASTERS", "durationYears": 2, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Medicine",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Medicine and Bachelor of Surgery (MBChB)", "code": "MBCHB", "level": "UNDERGRADUATE", "durationYears": 6, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Pharmacy",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Pharmacy", "code": "BPHARM", "level": "UNDERGRADUATE", "durationYears": 5, "verified": false }
+          ]
+        },
+        {
+          "name": "Department of Medical Laboratory Sciences",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Medical Laboratory Science", "code": "BSMLS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": false }
+          ]
+        },
+        {
+          "name": "Department of Food, Nutrition and Dietetics",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Food, Nutrition and Dietetics", "code": "BSFND", "level": "UNDERGRADUATE", "durationYears": 4, "verified": false }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Arts and Social Sciences",
+      "code": "SASS",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-arts-and-social-science/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Geography",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts (Geography)", "code": "BAGEO", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of History and Heritage",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts (History)", "code": "BAHIS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Languages, Linguistics and Literature",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts (Kiswahili)", "code": "BAKIS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Arts (Linguistics)", "code": "BALIN", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Arts (Literature)", "code": "BALIT", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Philosophy and Religious Studies",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts (Religious Studies)", "code": "BAREL", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Political Science and Peace Studies",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Public Administration and Political Science", "code": "BPAPS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Criminology and Security Studies", "code": "BCSS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Peace and Conflict Studies", "code": "BPCS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Psychology",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts in Psychology", "code": "BAPSY", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Arts in Counselling Psychology", "code": "BACP", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Sociology, Gender and Development Studies",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Arts in Sociology and Social Work", "code": "BASSW", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Bachelor of Arts in Development Studies", "code": "BADS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Arts in Gender and Development Studies", "code": "BAGDS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Arts in Community Development", "code": "BACD", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Education and Human Resource Development",
+      "code": "SEHRD",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-education-and-human-resource-development/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Curriculum, Instruction and Media",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Education (Arts)", "code": "BEDA", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Education (Science)", "code": "BEDS", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Education (Early Childhood Development)", "code": "BECD", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Postgraduate Diploma in Education", "code": "PGDE", "level": "DIPLOMA", "durationYears": 1, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Educational Foundations, Administration, Planning and Economics",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Education (Special Needs Education)", "code": "BSNE", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Master of Education", "code": "MED", "level": "MASTERS", "durationYears": 2, "verified": true, "departmentInferred": true },
+            { "name": "Doctor of Philosophy in Education", "code": "PHDED", "level": "PHD", "durationYears": 3, "verified": true, "departmentInferred": true }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "School of Agriculture and Natural Resources Management",
+      "code": "SANRM",
+      "sourceUrl": "https://sanrm.kisiiuniversity.ac.ke/programmes/",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Agricultural Sciences",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Agriculture", "code": "BSAG", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Horticulture", "code": "BSHO", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Agribusiness Management", "code": "BSABM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Agricultural Economics", "code": "BSAE", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Diploma in Animal Health and Production", "code": "DAHP", "level": "DIPLOMA", "durationYears": 2, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Agricultural Education and Extension",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Agricultural Education and Extension", "code": "BSAEE", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Diploma in Agricultural Education and Extension", "code": "DAEE", "level": "DIPLOMA", "durationYears": 2, "verified": true }
+          ]
+        },
+        {
+          "name": "Department of Natural Resources",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Science in Environmental Science", "code": "BSENV", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true },
+            { "name": "Bachelor of Science in Natural Resource Management", "code": "BSNRM", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true, "departmentInferred": true }
+          ]
+        },
+        {
+          "name": "Department of Applied Aquatic Sciences",
+          "verified": true,
+          "courses": []
+        }
+      ]
+    },
+    {
+      "name": "School of Law",
+      "code": "SOL",
+      "sourceUrl": "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-law/academics",
+      "verified": true,
+      "faculties": [
+        {
+          "name": "Department of Law",
+          "verified": true,
+          "courses": [
+            { "name": "Bachelor of Laws (LL.B.)", "code": "LLB", "level": "UNDERGRADUATE", "durationYears": 4, "verified": true },
+            { "name": "Diploma in Laws", "code": "DLAW", "level": "DIPLOMA", "durationYears": 2, "verified": true }
+          ]
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-information-technology/academics",
+    "https://sist.kisiiuniversity.ac.ke/programmes/",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-business-and-economics/academics",
+    "https://sobe.kisiiuniversity.ac.ke/",
+    "https://kisiiuniversity.ac.ke/dpt/department-of-accounting-and-finance/programs",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-pure-and-applied-science/academics",
+    "https://spas.kisiiuniversity.ac.ke/",
+    "https://kisiiuniversity.ac.ke/dpt/department-of-mathematics-and-actuarial-sciences",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-health-sciences/academics",
+    "https://kisiiuniversity.ac.ke/dpt/department-of-clinical-medicine",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-arts-and-social-science/academics",
+    "https://kisiiuniversity.ac.ke/schools_departments",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-education-and-human-resource-development/academics",
+    "https://kisiiuniversity.ac.ke/%D7%97%D7%96%D7%99%D7%AA%D7%99l/d/school-of-law/academics",
+    "https://sanrm.kisiiuniversity.ac.ke/programmes/",
+    "https://kisiiuniversity.ac.ke/our-programmes",
+    "https://admissions.kisiiuniversity.ac.ke/academic/programmes"
+  ]
+}
