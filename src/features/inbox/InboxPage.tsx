@@ -3,18 +3,18 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { AnimatePresence, m, useMotionValue, useTransform } from 'framer-motion'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Archive, ArchiveRestore, CheckCheck, ExternalLink, Inbox, MailOpen, Search, X } from 'lucide-react'
+import { Archive, ArchiveRestore, CheckCheck, ExternalLink, Inbox, MailOpen, Search, SlidersHorizontal, X } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useArchive, useHierarchyIndex, useInbox, useMarkRead } from '@/hooks/data'
 import { useLongPress } from '@/hooks/useLongPress'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { haptic } from '@/lib/push'
-import { Dialog, DialogContent } from '@/components/ui/overlays'
+import { Dialog, DialogContent, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/overlays'
 import { PullToRefresh } from '@/components/layout/PullToRefresh'
 import { useIsTabletUp } from '@/hooks/useMediaQuery'
 import { CategoryIcon, EmptyState, ListSkeleton, PageHeader, PriorityBadge } from '@/components/common'
 import { Button } from '@/components/ui/button'
-import { Input, NativeSelect, Tabs, TabsList, TabsTrigger } from '@/components/ui/primitives'
+import { Input, Label, NativeSelect, Tabs, TabsList, TabsTrigger } from '@/components/ui/primitives'
 import { CATEGORIES, type Category, type Delivery } from '@/types'
 import { CATEGORY_LABEL } from '@/core/labels'
 import { cn, shortDate } from '@/lib/utils'
@@ -41,9 +41,9 @@ function InboxRow({ d, active, swipeable, onOpen, onRead, onArchive, onMenu }: R
   const dragged = useRef(false)
   const lp = useLongPress(onMenu)
   return (
-    <m.li initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, height: 0, marginTop: 0 }} className="relative overflow-hidden rounded-xl">
+    <m.li initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, height: 0 }} className="relative overflow-hidden bg-muted">
       {swipeable && (
-        <div className="absolute inset-0 flex items-center justify-between rounded-xl px-5 text-sm font-medium" aria-hidden>
+        <div className="absolute inset-0 flex items-center justify-between px-5 text-sm font-medium" aria-hidden>
           <m.span style={{ opacity: readOpacity }} className="flex items-center gap-2 text-primary">
             <MailOpen className="size-5" /> {unread ? 'Read' : 'Already read'}
           </m.span>
@@ -80,9 +80,9 @@ function InboxRow({ d, active, swipeable, onOpen, onRead, onArchive, onMenu }: R
           }}
           {...lp.handlers}
           className={cn(
-            'flex w-full select-none items-start gap-3 rounded-xl border bg-card p-3 text-left transition-colors hover:border-primary/30 [-webkit-touch-callout:none] sm:hover:bg-accent/50',
-            active && 'border-primary/50 bg-primary-soft/50',
-            d.priority === 'URGENT' && unread && 'border-red-500/40',
+            'relative flex w-full select-none items-start gap-3 bg-card px-4 py-3.5 text-left transition-colors [-webkit-touch-callout:none] sm:hover:bg-accent/60',
+            active && 'bg-primary-soft/60 sm:hover:bg-primary-soft/60',
+            d.priority === 'URGENT' && unread && 'before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-r-full before:bg-red-500',
           )}
           aria-current={active ? 'true' : undefined}
         >
@@ -138,6 +138,7 @@ export function InboxPage() {
   }, [data, view, category, unit, q])
 
   const unreadCount = (data ?? []).filter((d) => !d.readAt && !d.archivedAt).length
+  const activeFilters = (category ? 1 : 0) + (unit ? 1 : 0)
 
   // Infinite scroll
   useEffect(() => setLimit(PAGE), [view, category, unit, q])
@@ -169,48 +170,72 @@ export function InboxPage() {
   const list = (
     <div className="min-w-0">
       <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <Tabs value={view} onValueChange={(v) => setView(v as typeof view)}>
-            <TabsList>
-              <TabsTrigger value="all">
-                <Inbox /> All
-              </TabsTrigger>
-              <TabsTrigger value="unread">
-                <MailOpen /> Unread{unreadCount ? ` (${unreadCount})` : ''}
-              </TabsTrigger>
-              <TabsTrigger value="archived">
-                <Archive /> <span className="hidden sm:inline">Archived</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_auto]">
-          <div className="relative col-span-2 sm:col-span-1">
+        <div className="flex gap-2">
+          <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search notices" className="pl-9" aria-label="Search notices" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search notices" className="rounded-xl bg-muted/50 pl-9" aria-label="Search notices" />
             {q && (
               <button className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground" onClick={() => setQ('')} aria-label="Clear search">
                 <X className="size-4" />
               </button>
             )}
           </div>
-          <NativeSelect value={category} onChange={(e) => setCategory(e.target.value as Category | '')} aria-label="Filter by category" className="sm:w-36">
-            <option value="">All categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {CATEGORY_LABEL[c]}
-              </option>
-            ))}
-          </NativeSelect>
-          <NativeSelect value={unit} onChange={(e) => setUnit(e.target.value)} aria-label="Filter by unit" className="sm:w-36">
-            <option value="">All units</option>
-            {units.map((u) => (
-              <option key={u!.id} value={u!.id}>
-                {u!.code}
-              </option>
-            ))}
-          </NativeSelect>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" className="relative shrink-0 rounded-xl" aria-label="Filters">
+                <SlidersHorizontal />
+                {activeFilters > 0 && <span className="absolute -right-1 -top-1 size-4 rounded-full bg-primary text-[10px] font-semibold leading-4 text-primary-foreground">{activeFilters}</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-64 space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="f-cat">Category</Label>
+                <NativeSelect id="f-cat" value={category} onChange={(e) => setCategory(e.target.value as Category | '')}>
+                  <option value="">All categories</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {CATEGORY_LABEL[c]}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="f-unit">Unit</Label>
+                <NativeSelect id="f-unit" value={unit} onChange={(e) => setUnit(e.target.value)}>
+                  <option value="">All units</option>
+                  {units.map((u) => (
+                    <option key={u!.id} value={u!.id}>
+                      {u!.code} – {u!.name}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
+        <Tabs value={view} onValueChange={(v) => setView(v as typeof view)}>
+          <TabsList className="grid w-full grid-cols-3 rounded-xl sm:inline-grid sm:w-auto">
+            <TabsTrigger value="all" className="rounded-lg">All</TabsTrigger>
+            <TabsTrigger value="unread" className="rounded-lg">
+              Unread{unreadCount ? ` · ${unreadCount}` : ''}
+            </TabsTrigger>
+            <TabsTrigger value="archived" className="rounded-lg">Archived</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        {activeFilters > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {category && (
+              <button type="button" onClick={() => setCategory('')} className="inline-flex h-8 items-center gap-1.5 rounded-full bg-primary-soft px-3 text-xs font-medium text-primary">
+                {CATEGORY_LABEL[category]} <X className="size-3.5" aria-label="Remove filter" />
+              </button>
+            )}
+            {unit && (
+              <button type="button" onClick={() => setUnit('')} className="inline-flex h-8 items-center gap-1.5 rounded-full bg-primary-soft px-3 text-xs font-medium text-primary">
+                {h?.unitById.get(unit)?.code} <X className="size-3.5" aria-label="Remove filter" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mt-4">
@@ -224,7 +249,7 @@ export function InboxPage() {
           />
         ) : (
           <>
-            <ul className="space-y-2" aria-label="Notices">
+            <ul className="divide-y overflow-hidden rounded-2xl border bg-card shadow-soft" aria-label="Notices">
               <AnimatePresence initial={false}>
                 {filtered.slice(0, limit).map((d) => (
                   <InboxRow
@@ -258,8 +283,8 @@ export function InboxPage() {
         description={unreadCount ? `${unreadCount} unread notice${unreadCount === 1 ? '' : 's'}` : "You're all caught up"}
         actions={
           unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAll}>
-              <CheckCheck /> Mark all read
+            <Button variant="ghost" size="sm" onClick={markAll} aria-label="Mark all as read">
+              <CheckCheck /> <span className="hidden sm:inline">Mark all read</span>
             </Button>
           )
         }

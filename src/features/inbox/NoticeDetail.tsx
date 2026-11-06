@@ -60,7 +60,7 @@ export function NoticeDetail({ notificationId, compact }: { notificationId: stri
         </div>
       </div>
 
-      <dl className="mt-5 grid grid-cols-1 gap-2 rounded-xl border bg-muted/40 p-3 text-sm sm:grid-cols-2">
+      <dl className="mt-5 grid grid-cols-1 gap-2 rounded-xl bg-muted/60 p-3.5 text-sm text-foreground/85 sm:grid-cols-2">
         <div className="flex items-center gap-2">
           <Users className="size-4 shrink-0 text-muted-foreground" aria-hidden />
           <dt className="sr-only">Audience</dt>

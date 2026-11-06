@@ -21,7 +21,6 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react'
-import { m } from 'framer-motion'
 import type { Category, Delivery, DeliveryStatus, PositionType, Priority, Role, UserType } from '@/types'
 import { CATEGORY_LABEL, POSITION_LABEL, PRIORITY_LABEL, ROLE_LABEL } from '@/core/labels'
 import { cn, initials } from '@/lib/utils'
@@ -54,7 +53,7 @@ export function RoleBadge({ role, userType, positions = [], className }: { role:
     const p = positions[0]
     const Icon = LEADER_ICON[p]
     return (
-      <Badge className={cn('border-gold/50 bg-gold-soft text-gold-foreground dark:text-gold', className)}>
+      <Badge className={cn('border-transparent bg-gold-soft text-gold-foreground dark:text-gold', className)}>
         <Icon aria-hidden />
         {POSITION_LABEL[p]}
       </Badge>
@@ -62,13 +61,13 @@ export function RoleBadge({ role, userType, positions = [], className }: { role:
   }
   if (userType === 'STUDENT')
     return (
-      <Badge className={cn('border-primary/25 bg-primary-soft text-primary', className)}>
+      <Badge className={cn('border-transparent bg-primary-soft text-primary', className)}>
         <GraduationCap aria-hidden />
         Student
       </Badge>
     )
   return (
-    <Badge className={cn('border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300', className)}>
+    <Badge className={cn('border-transparent bg-sky-500/10 text-sky-700 dark:text-sky-300', className)}>
       <Briefcase aria-hidden />
       {ROLE_LABEL[role]}
     </Badge>
@@ -94,21 +93,22 @@ export function UserAvatar({ name, userType, leader, className }: { name: string
 }
 
 // ───────── Categories & priority ─────────
-export const CATEGORY_STYLE: Record<Category, { icon: LucideIcon; className: string; dot: string }> = {
-  ACADEMIC: { icon: BookOpen, className: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25', dot: 'bg-blue-500' },
-  EXAM: { icon: NotebookPen, className: 'bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/25', dot: 'bg-orange-500' },
-  FINANCE: { icon: Wallet, className: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25', dot: 'bg-emerald-500' },
-  EVENT: { icon: CalendarDays, className: 'bg-pink-500/10 text-pink-700 dark:text-pink-300 border-pink-500/25', dot: 'bg-pink-500' },
-  EMERGENCY: { icon: Siren, className: 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30', dot: 'bg-red-500' },
-  GENERAL: { icon: Megaphone, className: 'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/25', dot: 'bg-slate-500' },
+/** Category colour lives in the icon only, on a neutral tile: calm lists, still scannable. */
+export const CATEGORY_STYLE: Record<Category, { icon: LucideIcon; text: string; dot: string }> = {
+  ACADEMIC: { icon: BookOpen, text: 'text-blue-600 dark:text-blue-400', dot: 'bg-blue-500' },
+  EXAM: { icon: NotebookPen, text: 'text-orange-600 dark:text-orange-400', dot: 'bg-orange-500' },
+  FINANCE: { icon: Wallet, text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-500' },
+  EVENT: { icon: CalendarDays, text: 'text-pink-600 dark:text-pink-400', dot: 'bg-pink-500' },
+  EMERGENCY: { icon: Siren, text: 'text-red-600 dark:text-red-400', dot: 'bg-red-500' },
+  GENERAL: { icon: Megaphone, text: 'text-slate-600 dark:text-slate-300', dot: 'bg-slate-500' },
 }
 
 export function CategoryIcon({ category, className }: { category: Category; className?: string }) {
   const s = CATEGORY_STYLE[category]
   const Icon = s.icon
   return (
-    <span className={cn('inline-flex size-10 shrink-0 items-center justify-center rounded-xl border', s.className, className)} aria-hidden>
-      <Icon className="size-5" />
+    <span className={cn('inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted', s.text, className)} aria-hidden>
+      <Icon className="size-[18px]" />
     </span>
   )
 }
@@ -117,21 +117,21 @@ export function CategoryBadge({ category }: { category: Category }) {
   const s = CATEGORY_STYLE[category]
   const Icon = s.icon
   return (
-    <Badge className={s.className}>
-      <Icon aria-hidden />
+    <Badge className="border-transparent bg-muted text-foreground">
+      <Icon aria-hidden className={s.text} />
       {CATEGORY_LABEL[category]}
     </Badge>
   )
 }
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
-  if (priority === 'NORMAL' || priority === 'LOW') return priority === 'LOW' ? <Badge className="text-muted-foreground">Low</Badge> : null
+  if (priority === 'NORMAL' || priority === 'LOW') return null
   return (
     <Badge
       className={
         priority === 'URGENT'
           ? 'border-red-600 bg-red-600 text-white'
-          : 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-300'
+          : 'border-transparent bg-amber-500/15 text-amber-800 dark:text-amber-300'
       }
     >
       {priority === 'URGENT' && <AlertTriangle aria-hidden />}
@@ -142,16 +142,16 @@ export function PriorityBadge({ priority }: { priority: Priority }) {
 
 // ───────── Delivery status ─────────
 const STATUS_STYLE: Record<DeliveryStatus, { label: string; icon: LucideIcon; className: string }> = {
-  PENDING: { label: 'Pushing', icon: Send, className: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25' },
-  PUSHED: { label: 'Pushed', icon: Send, className: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25' },
-  DELIVERED: { label: 'Delivered', icon: CircleCheck, className: 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30' },
-  READ: { label: 'Read', icon: CheckCheck, className: 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30' },
-  SMS_QUEUED: { label: 'Sending SMS…', icon: MessageSquareText, className: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/25' },
-  SMS_SENT: { label: 'Sent via SMS', icon: MessageSquareText, className: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/25' },
-  SMS_DELIVERED: { label: 'SMS delivered', icon: MessageSquareText, className: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/25' },
-  DELIVERED_AFTER_SMS: { label: 'Delivered after SMS', icon: CheckCheck, className: 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30' },
-  SMS_FAILED: { label: 'Failed', icon: XCircle, className: 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30' },
-  SMS_SKIPPED: { label: 'SMS skipped', icon: CircleSlash, className: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/25' },
+  PENDING: { label: 'Pushing', icon: Send, className: 'border-transparent bg-blue-500/10 text-blue-700 dark:text-blue-300' },
+  PUSHED: { label: 'Pushed', icon: Send, className: 'border-transparent bg-blue-500/10 text-blue-700 dark:text-blue-300' },
+  DELIVERED: { label: 'Delivered', icon: CircleCheck, className: 'border-transparent bg-green-500/10 text-green-700 dark:text-green-300' },
+  READ: { label: 'Read', icon: CheckCheck, className: 'border-transparent bg-green-500/10 text-green-700 dark:text-green-300' },
+  SMS_QUEUED: { label: 'Sending SMS…', icon: MessageSquareText, className: 'border-transparent bg-purple-500/10 text-purple-700 dark:text-purple-300' },
+  SMS_SENT: { label: 'Sent via SMS', icon: MessageSquareText, className: 'border-transparent bg-purple-500/10 text-purple-700 dark:text-purple-300' },
+  SMS_DELIVERED: { label: 'SMS delivered', icon: MessageSquareText, className: 'border-transparent bg-purple-500/10 text-purple-700 dark:text-purple-300' },
+  DELIVERED_AFTER_SMS: { label: 'Delivered after SMS', icon: CheckCheck, className: 'border-transparent bg-green-500/10 text-green-700 dark:text-green-300' },
+  SMS_FAILED: { label: 'Failed', icon: XCircle, className: 'border-transparent bg-red-500/10 text-red-700 dark:text-red-300' },
+  SMS_SKIPPED: { label: 'SMS skipped', icon: CircleSlash, className: 'border-transparent bg-slate-500/10 text-slate-600 dark:text-slate-300' },
 }
 
 /** Status chip. Awaiting ACK shows an amber countdown ("Waiting for device 0:42"). */
@@ -160,7 +160,7 @@ export function StatusChip({ delivery, now }: { delivery: Pick<Delivery, 'status
   if (waiting) {
     const secs = (delivery.ackDeadline.getTime() - now!) / 1000
     return (
-      <Badge className="border-amber-500/40 bg-amber-500/10 tabular-nums text-amber-800 dark:text-amber-300" aria-live="off">
+      <Badge className="border-transparent bg-amber-500/10 tabular-nums text-amber-800 dark:text-amber-300" aria-live="off">
         <Clock aria-hidden />
         Waiting for device {mmss(secs)}
       </Badge>
@@ -203,30 +203,48 @@ export function CountdownRing({ remaining, total, size = 36 }: { remaining: numb
 }
 
 // ───────── Layout pieces ─────────
-export function PageHeader({ title, description, actions, icon: Icon }: { title: string; description?: ReactNode; actions?: ReactNode; icon?: LucideIcon }) {
+/** Page title block. Lean on phones: smaller title, actions inline. (`icon` kept for API compatibility.) */
+export function PageHeader({ title, description, actions }: { title: string; description?: ReactNode; actions?: ReactNode; icon?: LucideIcon }) {
   return (
-    <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex min-w-0 items-start gap-3">
-        {Icon && (
-          <span className="mt-0.5 hidden size-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary sm:inline-flex" aria-hidden>
-            <Icon className="size-5" />
-          </span>
-        )}
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
-        </div>
+    <div className="mb-4 flex items-end justify-between gap-3 sm:mb-6">
+      <div className="min-w-0">
+        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h1>
+        {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">{actions}</div>}
     </div>
   )
 }
 
-export function EmptyState({ icon: Icon = CircleDashed, title, description, action }: { icon?: LucideIcon; title: string; description?: ReactNode; action?: ReactNode }) {
+/** A titled block of content: the building unit of every screen (title, optional action, body). */
+export function Section({ title, action, children, className }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed px-6 py-12 text-center">
-      <span className="mb-3 inline-flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden>
-        <Icon className="size-6" />
+    <section className={cn('min-w-0', className)}>
+      {(title || action) && (
+        <div className="mb-2 flex min-h-8 items-center justify-between gap-2 px-1">
+          {title && <h2 className="text-sm font-semibold text-foreground/80">{title}</h2>}
+          {action}
+        </div>
+      )}
+      {children}
+    </section>
+  )
+}
+
+/** Grouped list (iOS / Material style): one card, rows separated by hairlines. */
+export function ListCard({ children, className, label }: { children: ReactNode; className?: string; label?: string }) {
+  return (
+    <ul aria-label={label} className={cn('divide-y overflow-hidden rounded-2xl border bg-card shadow-soft', className)}>
+      {children}
+    </ul>
+  )
+}
+
+export function EmptyState({ icon: Icon = CircleDashed, title, description, action, bare }: { icon?: LucideIcon; title: string; description?: ReactNode; action?: ReactNode; bare?: boolean }) {
+  return (
+    <div className={cn('flex flex-col items-center justify-center px-6 py-10 text-center', !bare && 'rounded-2xl border border-dashed')}>
+      <span className="mb-3 inline-flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden>
+        <Icon className="size-5" />
       </span>
       <p className="font-medium">{title}</p>
       {description && <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>}
@@ -237,9 +255,9 @@ export function EmptyState({ icon: Icon = CircleDashed, title, description, acti
 
 export function ListSkeleton({ rows = 6 }: { rows?: number }) {
   return (
-    <div className="space-y-2" aria-busy="true" aria-label="Loading">
+    <div className="divide-y overflow-hidden rounded-2xl border bg-card" aria-busy="true" aria-label="Loading">
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="flex items-center gap-3 rounded-xl border bg-card p-3">
+        <div key={i} className="flex items-center gap-3 p-3.5">
           <Skeleton className="size-10 rounded-xl" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-2/3" />
@@ -254,10 +272,10 @@ export function ListSkeleton({ rows = 6 }: { rows?: number }) {
 export function PageSkeleton() {
   return (
     <div className="space-y-4" aria-busy="true" aria-label="Loading page">
-      <Skeleton className="h-8 w-48" />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <Skeleton className="h-7 w-40" />
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
+          <Skeleton key={i} className="h-24 rounded-2xl" />
         ))}
       </div>
       <ListSkeleton rows={4} />
@@ -265,26 +283,26 @@ export function PageSkeleton() {
   )
 }
 
-export function StatCard({ label, value, icon: Icon, hint, tone = 'default' }: { label: string; value: ReactNode; icon: LucideIcon; hint?: ReactNode; tone?: 'default' | 'green' | 'purple' | 'red' | 'amber' | 'gold' }) {
-  const tones = {
-    default: 'bg-primary-soft text-primary',
-    green: 'bg-green-500/10 text-green-700 dark:text-green-300',
-    purple: 'bg-purple-500/10 text-purple-700 dark:text-purple-300',
-    red: 'bg-red-500/10 text-red-700 dark:text-red-300',
-    amber: 'bg-amber-500/10 text-amber-700 dark:text-amber-300',
-    gold: 'bg-gold-soft text-gold-foreground dark:text-gold',
-  }
+const TONE_TEXT = {
+  default: 'text-primary',
+  green: 'text-green-600 dark:text-green-400',
+  purple: 'text-purple-600 dark:text-purple-400',
+  red: 'text-red-600 dark:text-red-400',
+  amber: 'text-amber-600 dark:text-amber-400',
+  gold: 'text-gold-foreground dark:text-gold',
+}
+
+/** Metric tile: label, big number, one line of context. Colour only on the small icon. */
+export function StatCard({ label, value, icon: Icon, hint, tone = 'default' }: { label: string; value: ReactNode; icon: LucideIcon; hint?: ReactNode; tone?: keyof typeof TONE_TEXT }) {
   return (
-    <m.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border bg-card p-4 shadow-soft">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <span className={cn('inline-flex size-8 items-center justify-center rounded-lg', tones[tone])} aria-hidden>
-          <Icon className="size-4" />
-        </span>
-      </div>
-      <p className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
-    </m.div>
+    <div className="min-w-0 rounded-2xl border bg-card p-4 shadow-soft">
+      <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+        <Icon className={cn('size-3.5 shrink-0', TONE_TEXT[tone])} aria-hidden />
+        <span className="truncate">{label}</span>
+      </p>
+      <p className="mt-1.5 truncate text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
+      {hint && <p className="mt-0.5 truncate text-xs text-muted-foreground">{hint}</p>}
+    </div>
   )
 }
 
