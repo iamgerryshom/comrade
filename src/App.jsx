@@ -11,7 +11,6 @@ import { TooltipProvider } from '@/components/ui/primitives'
 import { ErrorBoundary } from '@/components/common'
 import { AuthProvider } from '@/features/auth/AuthProvider'
 import { ForbiddenPage, FullPageLoader, NotFoundPage, RequireAuth, RequirePermission } from '@/features/auth/guards'
-import { WelcomePage } from '@/features/auth/WelcomePage'
 import { LoginPage } from '@/features/auth/LoginPage'
 import './App.css'
 
@@ -72,7 +71,7 @@ function App() {
           <BrowserRouter>
             <AuthProvider>
               <Routes>
-                <Route path="/" element={<WelcomePage />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route element={<RequireAuth />}>
                   <Route element={<Suspense fallback={<FullPageLoader />}><AppShell /></Suspense>}>

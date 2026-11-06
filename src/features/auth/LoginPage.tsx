@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router'
+import { Navigate, useLocation, useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { m } from 'framer-motion'
-import { ArrowLeft, Briefcase, Crown, GraduationCap, KeyRound, ShieldCheck, Star, UserRound, WifiOff, type LucideIcon } from 'lucide-react'
+import { Briefcase, Download, Crown, GraduationCap, KeyRound, ShieldCheck, Star, UserRound, WifiOff, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, FieldError, Input, Label } from '@/components/ui/primitives'
 import { DEMO_ACCOUNTS, DEMO_PASSWORD } from '@/data/demoAccounts'
@@ -12,6 +12,7 @@ import { env } from '@/lib/env'
 import { errorMessage } from '@/lib/utils'
 import { Logo } from '@/components/layout/Logo'
 import { useAuth } from './AuthProvider'
+import { useInstallAction } from '@/features/install/InstallPrompt'
 
 const schema = z.object({
   identifier: z.string().trim().min(3, 'Enter your email or admission number'),
@@ -38,6 +39,7 @@ export function LoginPage() {
   const from = (location.state as { from?: string } | null)?.from ?? '/home'
   const [error, setError] = useState<string | null>(null)
   const [demoBusy, setDemoBusy] = useState<string | null>(null)
+  const install = useInstallAction()
   const { register, handleSubmit, formState } = useForm<Form>({ resolver: zodResolver(schema), defaultValues: { identifier: '', password: '' } })
 
   if (status === 'signedIn') return <Navigate to={from} replace />
@@ -67,21 +69,20 @@ export function LoginPage() {
   return (
     <div className="min-h-dvh bg-gradient-to-b from-primary-soft/60 to-background">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link to="/" aria-label="Comrade home">
-          <Logo />
-        </Link>
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/">
-            <ArrowLeft /> Back
-          </Link>
-        </Button>
+        <Logo />
+        {install.available && (
+          <Button variant="outline" size="sm" onClick={() => void install.install()}>
+            <Download /> Install app
+          </Button>
+        )}
       </div>
+      {install.sheet}
       <div className="mx-auto grid grid-cols-1 max-w-6xl gap-6 px-4 pb-12 pt-2 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-10 lg:pt-8">
         <m.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">Sign in to Comrade</CardTitle>
-              <CardDescription>Use your university email, admission number or staff number.</CardDescription>
+              <CardDescription>Never miss a class update, even offline. Use your university email, admission number or staff number.</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(submit)} className="space-y-4" noValidate>

@@ -27,7 +27,7 @@ This build is **demo-ready and runs entirely on in-memory dummy data**: there is
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173
+npm run dev          # http://localhost:5173 (opens the login page)
 ```
 
 You don't need a Firebase project, an SMS provider or any other account.
@@ -252,7 +252,7 @@ Comrade is **one codebase that works as a website and installs as an app**, on p
 | **iPhone / iPad** (Safari) | Tap **Install** → Comrade shows the steps: **Share → Add to Home Screen → Add** |
 | **Desktop** (Chrome / Edge) | The **Install** button in the address bar, the in-app banner, or user menu → **Install Comrade app**. It then opens in its own window from the Start menu or taskbar |
 
-The banner appears until Comrade is installed; dismissing it hides it for a week. "Install app" is also available in the user menu, on Profile, and on the welcome page. Once installed, Comrade opens **full-screen** (no browser bar) with a green splash and status bar, its own icon (including a maskable Android icon), and long-press **shortcuts** (Inbox, Compose, My units).
+The banner appears until Comrade is installed; dismissing it hides it for a week. "Install app" is also available on the login page, in the user menu, and on Profile. Once installed, Comrade opens **full-screen** (no browser bar) with a green splash and status bar, its own icon (including a maskable Android icon), and long-press **shortcuts** (Inbox, Compose, My units).
 
 ### Feels like a native app on phones
 
