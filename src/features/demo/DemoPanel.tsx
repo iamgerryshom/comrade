@@ -121,7 +121,7 @@ export function DemoPanel() {
               </Link>
             </Button>
             <Button variant="outline" size="sm" asChild className="justify-start">
-              <a href="/login" target="_blank" rel="noreferrer">
+              <a href={`${import.meta.env.BASE_URL}login`} target="_blank" rel="noreferrer">
                 <ExternalLink /> Open another tab (log in as someone else)
               </a>
             </Button>

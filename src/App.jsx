@@ -68,7 +68,7 @@ function App() {
       >
         <LazyMotion features={loadMotion} strict>
         <TooltipProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
             <AuthProvider>
               <Routes>
                 <Route path="/" element={<Navigate to="/login" replace />} />

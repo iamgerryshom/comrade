@@ -48,6 +48,8 @@ Sign in with one tap from the **Demo accounts** panel on the login page, or type
 | Ordinary Student | `student@demo.kisiiuniversity.ac.ke` | Own inbox, units and profile |
 | Student B | `student2@demo.kisiiuniversity.ac.ke` | Same class: use them as the "offline" student |
 
+**Live demo:** https://iamgerryshom.github.io/comrade/ (GitHub Pages, redeployed automatically on every push to `main` by `.github/workflows/deploy.yml`).
+
 ### Scripts
 
 | Command | What it does |
@@ -285,7 +287,7 @@ The banner appears until Comrade is installed; dismissing it hides it for a week
 ### Trying it on your phone
 
 Installing (and push notifications) needs **HTTPS** or `localhost`. `npm run dev` on a LAN IP (`http://192.168.x.x:5173`) runs the app in the phone browser, but it can't be installed there. To test installing on a real phone:
-- Option 1: deploy to Firebase Hosting (Phase 9).
+- Option 1: use the GitHub Pages deployment (HTTPS), or Firebase Hosting in Phase 9.
 - Option 2: use an HTTPS tunnel (e.g. `npx cloudflared tunnel --url http://localhost:4173` after `npm run build && npm run preview`).
 - Option 3: on Android, use Chrome's `chrome://inspect` port forwarding so the phone opens it as `localhost`.
 

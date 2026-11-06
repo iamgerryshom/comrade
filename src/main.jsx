@@ -26,7 +26,8 @@ root.render(
 // Public pages (welcome, login) don't need the data source: start it on first interaction or
 // when the browser is idle, so the landing page paints fast on slow phones. Everything else
 // (and any existing session) starts it immediately.
-const isPublic = ['/', '/login'].includes(location.pathname) && !sessionStorage.getItem('comrade.session.uid')
+const path = '/' + location.pathname.slice(import.meta.env.BASE_URL.length)
+const isPublic = ['/', '/login'].includes(path) && !sessionStorage.getItem('comrade.session.uid')
 const boot = new Promise((resolve) => {
   if (!isPublic) return resolve()
   const go = () => resolve()

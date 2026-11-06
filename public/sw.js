@@ -1,9 +1,12 @@
 /* Comrade service worker: app-shell cache (installable, opens offline) + web push. */
 
-const VERSION = 'comrade-v2'
+const VERSION = 'comrade-v3'
 const SHELL = `${VERSION}-shell`
 const ASSETS = `${VERSION}-assets`
-const PRECACHE = ['/', '/manifest.webmanifest', '/favicon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/maskable-512.png', '/icons/badge-96.png']
+// Works at the site root or a sub-folder (e.g. GitHub Pages /comrade/): all paths are relative to the scope
+const BASE = new URL(self.registration.scope).pathname
+const SHELL_URL = BASE
+const PRECACHE = ['', 'manifest.webmanifest', 'favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/badge-96.png'].map((p) => BASE + p)
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -40,18 +43,19 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
+          // GitHub Pages answers deep links with 404.html (= the app), so cache only real 200s
           if (res.ok) {
             const copy = res.clone()
-            caches.open(SHELL).then((c) => c.put('/', copy))
+            caches.open(SHELL).then((c) => c.put(SHELL_URL, copy))
           }
           return res
         })
-        .catch(() => caches.match('/', { cacheName: SHELL }).then((r) => r || Response.error())),
+        .catch(() => caches.match(SHELL_URL, { cacheName: SHELL }).then((r) => r || Response.error())),
     )
     return
   }
 
-  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/icons/')) {
+  if (url.pathname.startsWith(BASE + 'assets/') || url.pathname.startsWith(BASE + 'icons/')) {
     event.respondWith(
       caches.match(req).then(
         (hit) =>
@@ -73,12 +77,12 @@ function show(n) {
   return self.registration.showNotification(n.title, {
     body: n.body,
     tag: n.deliveryId || n.notificationId,
-    icon: '/icons/icon-192.png',
-    badge: '/icons/badge-96.png',
+    icon: BASE + 'icons/icon-192.png',
+    badge: BASE + 'icons/badge-96.png',
     requireInteraction: n.priority === 'URGENT',
     renotify: urgent,
     vibrate: urgent ? [200, 100, 200] : undefined,
-    data: { url: `/notice/${n.notificationId}` },
+    data: { url: `${BASE}notice/${n.notificationId}` },
   })
 }
 
@@ -115,7 +119,7 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const url = (event.notification.data && event.notification.data.url) || '/inbox'
+  const url = (event.notification.data && event.notification.data.url) || BASE + 'inbox'
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const c of list) {

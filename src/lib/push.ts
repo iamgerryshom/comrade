@@ -5,7 +5,7 @@ let registration: Promise<ServiceWorkerRegistration | null> | null = null
 export function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (registration) return registration
   if (!('serviceWorker' in navigator)) return (registration = Promise.resolve(null))
-  registration = navigator.serviceWorker.register('/sw.js').catch((e) => {
+  registration = navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch((e) => {
     console.warn('Service worker registration failed', e)
     return null
   })
