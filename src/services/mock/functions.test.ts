@@ -5,7 +5,7 @@ import { mockAuth } from './auth'
 import { setFakeDelay, setSessionUid } from './session'
 import { store } from './store'
 import { workerTick } from './server'
-import { DEMO_PASSWORD } from '@/data/generate'
+import { DEMO_PASSWORD } from '@/data/demoAccounts'
 
 const clone = () => structuredClone(dataset)
 const as = (uid: string | null) => setSessionUid(uid)

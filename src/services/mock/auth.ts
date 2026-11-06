@@ -1,4 +1,4 @@
-import { DEMO_PASSWORD } from '@/data/generate'
+import { DEMO_PASSWORD } from '@/data/demoAccounts'
 import type { AuthService, AuthUser } from '../types'
 import { delay, getSessionUid, onSessionChange, principalOf, setSessionUid } from './session'
 import { mockFunctions } from './functions'

@@ -3,6 +3,7 @@ import { ruleToScopes, resolveAudience } from '@/core/audience'
 import { applyAck } from '@/core/delivery/state'
 import { scopeContains } from '@/core/hierarchy'
 import { POSITION_LABEL } from '@/core/labels'
+import { computeSenderLabel } from '@/core/senderLabel'
 import { maskPhone } from '@/core/phone'
 import { can, canSendAtAll, dailySendLimit, INSTITUTION_ID, phoneVisibility, type Principal } from '@/core/permissions'
 import {
@@ -105,41 +106,17 @@ export function audienceLabel(rule: AudienceRule): string {
 }
 
 export function senderLabel(user: User, p: Principal, rule: AudienceRule): string {
-  if (user.userType === 'STAFF') {
-    switch (user.role) {
-      case 'LECTURER': {
-        const unit = rule.targetType === 'UNIT' ? store.get('units', rule.targetId) : undefined
-        return unit ? `Lecturer ${unit.code.replace(/\s/g, '')}` : 'Lecturer'
-      }
-      case 'HOD':
-        return `HOD ${(store.get('faculties', user.facultyId ?? '')?.name ?? '').replace('Department of ', '').slice(0, 22)}`.trim()
-      case 'SCHOOL_DEAN':
-        return `Dean ${store.get('schools', user.schoolId ?? '')?.code ?? ''}`.trim()
-      case 'INSTITUTION_ADMIN':
-        return (user.title ?? 'Registrar').split(/[(,]/)[0].trim()
-      case 'SUPER_ADMIN':
-        return 'KSU Admin'
-      default:
-        return 'KSU Staff'
-    }
-  }
-  const positions = store.list('leadershipPositions', (x) => x.userId === user.uid && p.claims.positions.includes(x.position) && x.isActive)
-  const order = ['STUDENT_PRESIDENT', 'STUDENT_OFFICIAL', 'SCHOOL_REP', 'FACULTY_REP', 'CLASS_REP']
-  positions.sort((a, b) => order.indexOf(a.position) - order.indexOf(b.position))
-  const pos = positions[0]
-  if (!pos) return 'Student'
-  switch (pos.position) {
-    case 'STUDENT_PRESIDENT':
-      return 'Student President'
-    case 'STUDENT_OFFICIAL':
-      return pos.title
-    case 'SCHOOL_REP':
-      return `School Rep ${store.get('schools', pos.scopeId)?.code ?? ''}`.trim()
-    case 'FACULTY_REP':
-      return 'Faculty Rep'
-    case 'CLASS_REP':
-      return `Class Rep ${store.get('courses', pos.scopeId)?.code ?? ''} Y${pos.yearOfStudy ?? ''}`
-  }
+  const now = Date.now()
+  const active = store.list(
+    'leadershipPositions',
+    (x) => x.userId === user.uid && x.isActive && p.claims.positions.includes(x.position) && x.startDate.getTime() <= now && x.endDate.getTime() >= now,
+  )
+  return computeSenderLabel(user, active, rule, {
+    unitCode: (id) => store.get('units', id)?.code,
+    facultyName: (id) => store.get('faculties', id)?.name,
+    schoolCode: (id) => store.get('schools', id)?.code,
+    courseCode: (id) => store.get('courses', id)?.code,
+  })
 }
 
 function checkAudience(ctx: CallContext, rule: AudienceRule, urgent: boolean) {

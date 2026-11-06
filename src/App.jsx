@@ -1,121 +1,103 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { lazy } from 'react'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { Toaster } from 'sonner'
+import { canSendAtAll } from '@/core/permissions'
+import { idbPersister, PERSISTED_KEYS } from '@/lib/queryPersist'
+import { useTheme } from '@/hooks/useTheme'
+import { TooltipProvider } from '@/components/ui/primitives'
+import { ErrorBoundary } from '@/components/common'
+import { AppShell } from '@/components/layout/AppShell'
+import { AuthProvider } from '@/features/auth/AuthProvider'
+import { ForbiddenPage, NotFoundPage, RequireAuth, RequirePermission } from '@/features/auth/guards'
+import { WelcomePage } from '@/features/auth/WelcomePage'
+import { LoginPage } from '@/features/auth/LoginPage'
 import './App.css'
 
+// Route-level code splitting keeps the first load small on mobile data
+const named = (loader, name) => lazy(() => loader().then((m) => ({ default: m[name] })))
+const HomePage = named(() => import('@/features/home/HomePage'), 'HomePage')
+const InboxPage = named(() => import('@/features/inbox/InboxPage'), 'InboxPage')
+const NoticePage = named(() => import('@/features/inbox/NoticePage'), 'NoticePage')
+const ShortCodePage = named(() => import('@/features/inbox/NoticePage'), 'ShortCodePage')
+const ComposePage = named(() => import('@/features/compose/ComposePage'), 'ComposePage')
+const SentPage = named(() => import('@/features/delivery/SentPage'), 'SentPage')
+const TimelinePage = named(() => import('@/features/delivery/TimelinePage'), 'TimelinePage')
+const MyUnitsPage = named(() => import('@/features/explorer/MyUnitsPage'), 'MyUnitsPage')
+const ExplorerPage = named(() => import('@/features/explorer/ExplorerPage'), 'ExplorerPage')
+const LookupPage = named(() => import('@/features/lookup/LookupPage'), 'LookupPage')
+const AnalyticsPage = named(() => import('@/features/analytics/AnalyticsPage'), 'AnalyticsPage')
+const UsersPage = named(() => import('@/features/admin/UsersPage'), 'UsersPage')
+const SmsLogsPage = named(() => import('@/features/admin/LogsPages'), 'SmsLogsPage')
+const AuditLogPage = named(() => import('@/features/admin/LogsPages'), 'AuditLogPage')
+const SettingsPage = named(() => import('@/features/settings/SettingsPage'), 'SettingsPage')
+const ProfilePage = named(() => import('@/features/settings/ProfilePage'), 'ProfilePage')
+const MockSmsInboxPage = named(() => import('@/features/demo/MockSmsInboxPage'), 'MockSmsInboxPage')
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 30_000, gcTime: 24 * 60 * 60_000, refetchOnWindowFocus: false, retry: 1 },
+  },
+})
+
+const senders = (a) => !!a.claims && canSendAtAll(a.claims)
+const students = (a) => a.claims?.userType === 'STUDENT'
+
+function ThemedToaster() {
+  const { resolved } = useTheme()
+  return <Toaster theme={resolved} position="top-center" richColors closeButton toastOptions={{ className: 'font-sans' }} />
+}
+
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <ErrorBoundary>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{
+          persister: idbPersister,
+          maxAge: 24 * 60 * 60_000,
+          buster: 'comrade-v1',
+          dehydrateOptions: { shouldDehydrateQuery: (q) => q.state.status === 'success' && PERSISTED_KEYS.includes(String(q.queryKey[0])) },
+        }}
+      >
+        <TooltipProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/" element={<WelcomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route element={<RequireAuth />}>
+                  <Route element={<AppShell />}>
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/inbox" element={<InboxPage />} />
+                    <Route path="/notice/:id" element={<NoticePage />} />
+                    <Route path="/n/:code" element={<ShortCodePage />} />
+                    <Route path="/units" element={<RequirePermission when={students}><MyUnitsPage /></RequirePermission>} />
+                    <Route path="/compose" element={<RequirePermission action="notification.send" when={senders}><ComposePage /></RequirePermission>} />
+                    <Route path="/sent" element={<RequirePermission when={senders}><SentPage /></RequirePermission>} />
+                    <Route path="/sent/:id" element={<RequirePermission when={senders}><TimelinePage /></RequirePermission>} />
+                    <Route path="/lookup" element={<RequirePermission action="student.search_by_admission"><LookupPage /></RequirePermission>} />
+                    <Route path="/explorer" element={<RequirePermission action="directory.view"><ExplorerPage /></RequirePermission>} />
+                    <Route path="/analytics" element={<RequirePermission action="analytics.view"><AnalyticsPage /></RequirePermission>} />
+                    <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
+                    <Route path="/admin/users" element={<RequirePermission action="user.manage"><UsersPage /></RequirePermission>} />
+                    <Route path="/admin/sms" element={<RequirePermission action="sms_logs.view"><SmsLogsPage /></RequirePermission>} />
+                    <Route path="/admin/audit" element={<RequirePermission action="audit.view"><AuditLogPage /></RequirePermission>} />
+                    <Route path="/admin/settings" element={<RequirePermission action="settings.manage"><SettingsPage /></RequirePermission>} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/demo/sms" element={<MockSmsInboxPage />} />
+                    <Route path="/403" element={<ForbiddenPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+        <ThemedToaster />
+      </PersistQueryClientProvider>
+    </ErrorBoundary>
   )
 }
 
